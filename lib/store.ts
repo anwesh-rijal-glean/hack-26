@@ -1,7 +1,7 @@
 import { create } from "zustand";
 import { persist } from "zustand/middleware";
-import { AppState, Actor, AuditEvent, Link, Team, Task } from "./types";
-import { INITIAL_TASKS, INITIAL_TEAMS } from "./seed";
+import { AppState, Actor, AuditEvent, Link, Team, Task, Scorecard, TeamScore, RubricCriterion } from "./types";
+import { INITIAL_TASKS, INITIAL_TEAMS, INITIAL_RUBRIC } from "./seed";
 import { generateId } from "./utils";
 
 interface StoreState extends AppState {
@@ -17,6 +17,11 @@ interface StoreState extends AppState {
   resetTeam: (teamId: string, actor: Actor) => void;
   undoLast: (teamId: string, actor: Actor) => void;
   initializeStore: () => void;
+  // Scorecard actions
+  saveScorecard: (scorecard: Scorecard) => void;
+  submitScorecard: (scorecardId: string) => void;
+  updateRubric: (rubric: RubricCriterion[]) => void;
+  getScorecard: (judgeId: string, teamId: string) => Scorecard | undefined;
 }
 
 const createAuditEvent = (
@@ -39,6 +44,8 @@ export const useStore = create<StoreState>()(
       tasks: INITIAL_TASKS,
       teams: INITIAL_TEAMS,
       auditLog: [],
+      rubric: INITIAL_RUBRIC,
+      scorecards: [],
 
       initializeStore: () => {
         const state = get();
@@ -47,6 +54,8 @@ export const useStore = create<StoreState>()(
             tasks: INITIAL_TASKS,
             teams: INITIAL_TEAMS,
             auditLog: [],
+            rubric: INITIAL_RUBRIC,
+            scorecards: [],
           });
         }
       },
@@ -366,6 +375,57 @@ export const useStore = create<StoreState>()(
             auditLog: [undoEvent, ...state.auditLog],
           };
         });
+      },
+
+      // Scorecard actions
+      saveScorecard: (scorecard: Scorecard) => {
+        set((state) => {
+          const existingIndex = state.scorecards.findIndex(
+            (s) => s.judgeId === scorecard.judgeId && s.teamId === scorecard.teamId
+          );
+
+          const updatedScorecard = {
+            ...scorecard,
+            updatedAt: new Date().toISOString(),
+          };
+
+          if (existingIndex >= 0) {
+            // Update existing scorecard
+            const updatedScorecards = [...state.scorecards];
+            updatedScorecards[existingIndex] = updatedScorecard;
+            return { scorecards: updatedScorecards };
+          } else {
+            // Add new scorecard
+            return { scorecards: [...state.scorecards, updatedScorecard] };
+          }
+        });
+      },
+
+      submitScorecard: (scorecardId: string) => {
+        set((state) => {
+          const scorecardIndex = state.scorecards.findIndex((s) => s.id === scorecardId);
+          if (scorecardIndex < 0) return state;
+
+          const updatedScorecards = [...state.scorecards];
+          updatedScorecards[scorecardIndex] = {
+            ...updatedScorecards[scorecardIndex],
+            submittedAt: new Date().toISOString(),
+            updatedAt: new Date().toISOString(),
+          };
+
+          return { scorecards: updatedScorecards };
+        });
+      },
+
+      updateRubric: (rubric: RubricCriterion[]) => {
+        set({ rubric });
+      },
+
+      getScorecard: (judgeId: string, teamId: string) => {
+        const state = get();
+        return state.scorecards.find(
+          (s) => s.judgeId === judgeId && s.teamId === teamId
+        );
       },
     }),
     {

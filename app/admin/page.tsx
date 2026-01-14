@@ -8,12 +8,13 @@ import { TaskLockControls } from "@/components/TaskLockControls";
 import { TaskEditor } from "@/components/TaskEditor";
 import { TeamDetailDrawer } from "@/components/TeamDetailDrawer";
 import { Racetrack } from "@/components/Racetrack";
+import { ScorecardManager } from "@/components/ScorecardManager";
 import { ToastProvider, useToast } from "@/components/ui/toast";
 import { Button } from "@/components/ui/button";
 import { ArrowLeft } from "lucide-react";
 import Link from "next/link";
 import { saveAdminAuth, isAdminAuthed, clearAdminAuth } from "@/lib/auth";
-import { Task } from "@/lib/types";
+import { Task, RubricCriterion } from "@/lib/types";
 
 function AdminViewContent() {
   const [isAuthenticated, setIsAuthenticated] = useState(false);
@@ -21,10 +22,13 @@ function AdminViewContent() {
 
   const teams = useStore((state) => state.teams);
   const tasks = useStore((state) => state.tasks);
+  const rubric = useStore((state) => state.rubric);
+  const scorecards = useStore((state) => state.scorecards);
   const lockTask = useStore((state) => state.lockTask);
   const updateTask = useStore((state) => state.updateTask);
   const resetTeam = useStore((state) => state.resetTeam);
   const undoLast = useStore((state) => state.undoLast);
+  const updateRubric = useStore((state) => state.updateRubric);
   const initializeStore = useStore((state) => state.initializeStore);
 
   const { showToast } = useToast();
@@ -67,6 +71,11 @@ function AdminViewContent() {
   const handleUpdateTask = (taskId: number, updates: Partial<Task>) => {
     updateTask(taskId, updates, { type: "admin", id: "admin" });
     showToast("Task updated successfully!", "success");
+  };
+
+  const handleUpdateRubric = (newRubric: RubricCriterion[]) => {
+    updateRubric(newRubric);
+    showToast("Rubric updated successfully!", "success");
   };
 
   const handleLogout = () => {
@@ -169,6 +178,19 @@ function AdminViewContent() {
             onViewDetails={handleViewDetails}
             onUndo={handleUndo}
             onReset={handleReset}
+          />
+        </div>
+
+        {/* Scorecard Management */}
+        <div className="mb-6">
+          <h2 className="text-2xl font-bold text-gray-900 mb-4">
+            📊 Judging & Scorecards
+          </h2>
+          <ScorecardManager
+            scorecards={scorecards}
+            teams={teams}
+            rubric={rubric}
+            onUpdateRubric={handleUpdateRubric}
           />
         </div>
       </div>

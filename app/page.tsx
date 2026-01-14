@@ -48,6 +48,11 @@ export default function HomePage() {
                   🏇 Team Login
                 </button>
               </Link>
+              <Link href="/judge">
+                <button className="px-6 py-2 bg-orange-600 hover:bg-orange-700 text-white font-semibold rounded-lg shadow-md transition-colors">
+                  ⚖️ Judge Portal
+                </button>
+              </Link>
               <Link href="/admin">
                 <button className="px-6 py-2 bg-purple-600 hover:bg-purple-700 text-white font-semibold rounded-lg shadow-md transition-colors">
                   👑 Admin Login
