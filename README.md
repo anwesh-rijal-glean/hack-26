@@ -4,6 +4,13 @@ A real-time progress tracking application for hackathon competitions. Track 20 t
 
 ## 🚀 Features
 
+### Live Dashboard (Home Screen)
+- **Full-Screen Race Track**: View all 20 teams competing in real-time without login
+- **Auto-Refresh**: Updates every 5 seconds to show latest progress
+- **Live Statistics**: Total teams, finished teams, average progress, and milestones
+- **1920x1080 Optimized**: Perfect for displaying on venue screens
+- **Public View**: Anyone can watch the competition unfold
+
 ### Team View
 - **Team Customization**: Edit your team name and choose from 60+ icons to personalize your identity
 - **Progress Tracking**: Teams can check off completed milestones
@@ -68,9 +75,23 @@ Navigate to [http://localhost:3000](http://localhost:3000)
 
 ## 🎮 Usage
 
+### For Spectators / Venue Display
+
+1. Open the **Home Page** (http://localhost:3000)
+2. View the live race track with all 20 teams competing in real-time
+3. Press **F11** for fullscreen mode (recommended for venue displays)
+4. Updates automatically every 5 seconds
+5. No login required - perfect for public display screens!
+
+**Display Tips:**
+- Optimized for 1920x1080 resolution
+- Auto-refreshes to show live progress
+- Shows top statistics and full leaderboard
+- Can be projected on big screens at the venue
+
 ### For Teams
 
-1. Go to **Team View** from the homepage
+1. Click **"Team Login"** button on the homepage (or go to /team)
 2. Login with your team credentials:
    - Username: `team1` to `team20` (e.g., `team5`)
    - Password: `hackathon2026-1` to `hackathon2026-20` (e.g., `hackathon2026-5`)
@@ -88,7 +109,7 @@ Navigate to [http://localhost:3000](http://localhost:3000)
 
 ### For Admins
 
-1. Go to **Admin View** from the homepage
+1. Click **"Admin Login"** button on the homepage (or go to /admin)
 2. Enter password: `hackathon2026`
 3. Monitor all teams on the dashboard
 4. Lock/unlock tasks to control the competition flow

@@ -5,7 +5,8 @@
 ```bash
 npm install
 npm run dev
-# Open http://localhost:3000
+# Open http://localhost:3000 for live race track
+# Press F11 for fullscreen venue display
 ```
 
 ## 🔑 Important Info
@@ -21,6 +22,15 @@ npm run dev
 | **Port** | 3000 |
 
 ## 🎮 User Actions
+
+### Live Dashboard (Home - No Login)
+| Action | How To |
+|--------|--------|
+| View race | Open http://localhost:3000 |
+| Fullscreen | Press F11 |
+| Live updates | Auto-refreshes every 5 seconds |
+| See stats | Top bar shows key metrics |
+| View leaderboard | Right sidebar shows all 20 teams |
 
 ### Team View
 | Action | How To |
@@ -165,11 +175,11 @@ progress: [true, true, false, false, false, false, false, false, false, false]
 
 ## 🌐 URLs
 
-| View | URL |
-|------|-----|
-| Home | `http://localhost:3000/` |
-| Team | `http://localhost:3000/team` |
-| Admin | `http://localhost:3000/admin` |
+| View | URL | Login Required |
+|------|-----|----------------|
+| Live Dashboard | `http://localhost:3000/` | ❌ No (Public) |
+| Team View | `http://localhost:3000/team` | ✅ Yes (Team) |
+| Admin View | `http://localhost:3000/admin` | ✅ Yes (Admin) |
 
 ## 💾 Data Reset
 
