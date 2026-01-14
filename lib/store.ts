@@ -1,7 +1,7 @@
 import { create } from "zustand";
 import { persist } from "zustand/middleware";
 import { AppState, Actor, AuditEvent, Link, Team, Task, Scorecard, TeamScore, RubricCriterion } from "./types";
-import { INITIAL_TASKS, INITIAL_TEAMS, INITIAL_RUBRIC } from "./seed";
+import { INITIAL_TASKS, INITIAL_TEAMS, INITIAL_RUBRIC, FINALIST_TEAM_IDS } from "./seed";
 import { generateId } from "./utils";
 
 interface StoreState extends AppState {
@@ -22,6 +22,9 @@ interface StoreState extends AppState {
   submitScorecard: (scorecardId: string) => void;
   updateRubric: (rubric: RubricCriterion[]) => void;
   getScorecard: (judgeId: string, teamId: string) => Scorecard | undefined;
+  // Finalist management
+  setFinalistTeamIds: (teamIds: string[]) => void;
+  toggleFinalist: (teamId: string) => void;
 }
 
 const createAuditEvent = (
@@ -46,6 +49,7 @@ export const useStore = create<StoreState>()(
       auditLog: [],
       rubric: INITIAL_RUBRIC,
       scorecards: [],
+      finalistTeamIds: FINALIST_TEAM_IDS,
 
       initializeStore: () => {
         const state = get();
@@ -56,6 +60,7 @@ export const useStore = create<StoreState>()(
             auditLog: [],
             rubric: INITIAL_RUBRIC,
             scorecards: [],
+            finalistTeamIds: FINALIST_TEAM_IDS,
           });
         }
       },
@@ -426,6 +431,26 @@ export const useStore = create<StoreState>()(
         return state.scorecards.find(
           (s) => s.judgeId === judgeId && s.teamId === teamId
         );
+      },
+
+      // Finalist management
+      setFinalistTeamIds: (teamIds: string[]) => {
+        set({ finalistTeamIds: teamIds });
+      },
+
+      toggleFinalist: (teamId: string) => {
+        set((state) => {
+          const isFinalist = state.finalistTeamIds.includes(teamId);
+          if (isFinalist) {
+            return {
+              finalistTeamIds: state.finalistTeamIds.filter((id) => id !== teamId),
+            };
+          } else {
+            return {
+              finalistTeamIds: [...state.finalistTeamIds, teamId],
+            };
+          }
+        });
       },
     }),
     {

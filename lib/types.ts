@@ -81,5 +81,6 @@ export interface AppState {
   auditLog: AuditEvent[];
   rubric: RubricCriterion[];
   scorecards: Scorecard[];
+  finalistTeamIds: string[]; // Dynamic list of finalist teams
 }
 
