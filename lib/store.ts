@@ -25,6 +25,8 @@ interface StoreState extends AppState {
   // Finalist management
   setFinalistTeamIds: (teamIds: string[]) => void;
   toggleFinalist: (teamId: string) => void;
+  // Database reset
+  resetAllData: () => void;
 }
 
 const createAuditEvent = (
@@ -450,6 +452,18 @@ export const useStore = create<StoreState>()(
               finalistTeamIds: [...state.finalistTeamIds, teamId],
             };
           }
+        });
+      },
+
+      // Reset all data to initial seed values
+      resetAllData: () => {
+        set({
+          tasks: INITIAL_TASKS,
+          teams: INITIAL_TEAMS,
+          auditLog: [],
+          rubric: INITIAL_RUBRIC,
+          scorecards: [],
+          finalistTeamIds: FINALIST_TEAM_IDS,
         });
       },
     }),

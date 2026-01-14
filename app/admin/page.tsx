@@ -10,6 +10,7 @@ import { TeamDetailDrawer } from "@/components/TeamDetailDrawer";
 import { Racetrack } from "@/components/Racetrack";
 import { ScorecardManager } from "@/components/ScorecardManager";
 import { FinalistSelector } from "@/components/FinalistSelector";
+import { ResetDatabase } from "@/components/ResetDatabase";
 import { ToastProvider, useToast } from "@/components/ui/toast";
 import { Button } from "@/components/ui/button";
 import { ArrowLeft } from "lucide-react";
@@ -32,6 +33,7 @@ function AdminViewContent() {
   const undoLast = useStore((state) => state.undoLast);
   const updateRubric = useStore((state) => state.updateRubric);
   const toggleFinalist = useStore((state) => state.toggleFinalist);
+  const resetAllData = useStore((state) => state.resetAllData);
   const initializeStore = useStore((state) => state.initializeStore);
 
   const { showToast } = useToast();
@@ -95,6 +97,11 @@ function AdminViewContent() {
   const handleLogout = () => {
     setIsAuthenticated(false);
     clearAdminAuth();
+  };
+
+  const handleResetDatabase = () => {
+    resetAllData();
+    showToast("Database reset successfully! Page will reload...", "success");
   };
 
   if (!isAuthenticated) {
@@ -215,6 +222,11 @@ function AdminViewContent() {
             rubric={rubric}
             onUpdateRubric={handleUpdateRubric}
           />
+        </div>
+
+        {/* Database Reset */}
+        <div className="mb-6">
+          <ResetDatabase onReset={handleResetDatabase} />
         </div>
       </div>
 
