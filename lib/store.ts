@@ -10,6 +10,7 @@ interface StoreState extends AppState {
   setNotes: (teamId: string, notes: string, actor: Actor) => void;
   setTeamName: (teamId: string, name: string, actor: Actor) => void;
   setTeamIcon: (teamId: string, icon: string, actor: Actor) => void;
+  updateTask: (taskId: number, updates: Partial<Task>, actor: Actor) => void;
   addLink: (teamId: string, link: Link, actor: Actor) => void;
   removeLink: (teamId: string, linkId: string, actor: Actor) => void;
   lockTask: (taskId: number, locked: boolean, actor: Actor) => void;
@@ -166,6 +167,36 @@ export const useStore = create<StoreState>()(
 
           return {
             teams: state.teams.map((t) => (t.id === teamId ? updatedTeam : t)),
+            auditLog: [auditEvent, ...state.auditLog],
+          };
+        });
+      },
+
+      updateTask: (taskId: number, updates: Partial<Task>, actor: Actor) => {
+        set((state) => {
+          const task = state.tasks.find((t) => t.id === taskId);
+          if (!task) return state;
+
+          const updatedTask: Task = {
+            ...task,
+            ...updates,
+            id: taskId, // Ensure ID doesn't change
+          };
+
+          const auditEvent = createAuditEvent(
+            "ADMIN_OVERRIDE",
+            actor,
+            "global",
+            { 
+              taskId, 
+              from: task,
+              to: updatedTask,
+              field: "task" 
+            }
+          );
+
+          return {
+            tasks: state.tasks.map((t) => (t.id === taskId ? updatedTask : t)),
             auditLog: [auditEvent, ...state.auditLog],
           };
         });

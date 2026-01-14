@@ -37,24 +37,28 @@ npm run dev
 |--------|--------|
 | Login | Use `team1-20` and `hackathon2026-1-20` |
 | Logout | Click "Logout" button in header |
+| See ranking | Displayed prominently on your dashboard |
 | Change team icon | Click current icon to open picker with 60+ options |
 | Edit team name | Click pencil icon next to team name |
 | Complete task | Check the checkbox |
 | Add notes | Type and click "Save Notes" |
 | Add link | Fill form and click "Add Link" |
 | Remove link | Click trash icon |
+| View race track | Click "Back to Live Dashboard" or visit home page |
 
 ### Admin View
 | Action | How To |
 |--------|--------|
 | Login | Password: `hackathon2026` |
-| Lock task | Click "Unlocked" button on task |
-| Unlock task | Click "Locked" button on task |
+| Logout | Click "Logout" in header |
+| Edit task | Click edit (✏️) icon on task in "Edit Tasks" panel |
+| Update task details | Edit title, description, or due date, then save |
+| Lock task | Click "Unlocked" button in "Task Lock Controls" |
+| Unlock task | Click "Locked" button in "Task Lock Controls" |
 | View team | Click "View" in team row |
 | Undo action | Click "Undo" in team row |
 | Reset team | Click "Reset" and confirm |
 | Edit team | Click "View" then edit in drawer |
-| Logout | Click "Logout" in header |
 
 ## 📊 Understanding the Race Track
 

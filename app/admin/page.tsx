@@ -5,6 +5,7 @@ import { useStore } from "@/lib/store";
 import { AdminPasswordGate } from "@/components/AdminPasswordGate";
 import { AdminTable } from "@/components/AdminTable";
 import { TaskLockControls } from "@/components/TaskLockControls";
+import { TaskEditor } from "@/components/TaskEditor";
 import { TeamDetailDrawer } from "@/components/TeamDetailDrawer";
 import { Racetrack } from "@/components/Racetrack";
 import { ToastProvider, useToast } from "@/components/ui/toast";
@@ -12,6 +13,7 @@ import { Button } from "@/components/ui/button";
 import { ArrowLeft } from "lucide-react";
 import Link from "next/link";
 import { saveAdminAuth, isAdminAuthed, clearAdminAuth } from "@/lib/auth";
+import { Task } from "@/lib/types";
 
 function AdminViewContent() {
   const [isAuthenticated, setIsAuthenticated] = useState(false);
@@ -20,6 +22,7 @@ function AdminViewContent() {
   const teams = useStore((state) => state.teams);
   const tasks = useStore((state) => state.tasks);
   const lockTask = useStore((state) => state.lockTask);
+  const updateTask = useStore((state) => state.updateTask);
   const resetTeam = useStore((state) => state.resetTeam);
   const undoLast = useStore((state) => state.undoLast);
   const initializeStore = useStore((state) => state.initializeStore);
@@ -59,6 +62,11 @@ function AdminViewContent() {
       locked ? "Task locked!" : "Task unlocked!",
       locked ? "info" : "success"
     );
+  };
+
+  const handleUpdateTask = (taskId: number, updates: Partial<Task>) => {
+    updateTask(taskId, updates, { type: "admin", id: "admin" });
+    showToast("Task updated successfully!", "success");
   };
 
   const handleLogout = () => {
@@ -125,9 +133,30 @@ function AdminViewContent() {
           </div>
         </div>
 
-        {/* Task Lock Controls */}
-        <div className="mb-6">
+        {/* Task Management */}
+        <div className="grid lg:grid-cols-2 gap-6 mb-6">
+          {/* Task Lock Controls */}
           <TaskLockControls tasks={tasks} onToggleLock={handleToggleLock} />
+
+          {/* Task Editor */}
+          <div className="bg-white rounded-xl shadow-lg p-6 border-2 border-gray-200">
+            <h3 className="text-xl font-bold text-gray-900 mb-4">
+              Edit Tasks
+            </h3>
+            <p className="text-sm text-gray-600 mb-4">
+              Update task titles, descriptions, and due dates. Changes apply to
+              all teams.
+            </p>
+            <div className="space-y-3 max-h-[400px] overflow-y-auto">
+              {tasks.map((task) => (
+                <TaskEditor
+                  key={task.id}
+                  task={task}
+                  onSave={handleUpdateTask}
+                />
+              ))}
+            </div>
+          </div>
         </div>
 
         {/* Teams Table */}

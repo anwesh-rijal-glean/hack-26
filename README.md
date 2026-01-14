@@ -14,15 +14,16 @@ A real-time progress tracking application for hackathon competitions. Track 20 t
 ### Team View
 - **Team Customization**: Edit your team name and choose from 60+ icons to personalize your identity
 - **Progress Tracking**: Teams can check off completed milestones
+- **Current Ranking**: See your rank among all teams at a glance
 - **Notes Management**: Add and edit team notes
 - **Evidence Links**: Submit links to demos, repos, and documentation
-- **Live Leaderboard**: See your position relative to other teams
 - **Task Locking**: Respects admin-locked tasks
 - **Confetti Celebration**: Automatic celebration when all tasks are completed!
+- **Clean Interface**: Focused view showing only your team's data
 
 ### Admin View
 - **Full Oversight**: Monitor all 20 teams simultaneously
-- **Task Management**: Lock/unlock tasks globally
+- **Task Management**: Lock/unlock tasks globally + Edit task names, descriptions, and due dates
 - **Team Controls**: Undo last changes or reset teams completely
 - **Audit Trail**: Complete history of all actions with timestamps
 - **Override Permissions**: Edit any team's progress, notes, and links
@@ -102,20 +103,22 @@ Navigate to [http://localhost:3000](http://localhost:3000)
 5. Check off tasks as you complete them (locked tasks can't be modified)
 6. Add notes about your progress
 7. Submit evidence links (GitHub repo, demo video, etc.)
-8. Watch your horse advance on the race track!
-9. Logout when done to protect your team's data
+8. See your current ranking displayed prominently
+9. Visit the Live Dashboard (home page) to watch all teams racing!
+10. Logout when done to protect your team's data
 
-**Important**: Each team can only edit their own progress. You cannot modify other teams' data.
+**Important**: Each team can only edit their own progress. You cannot modify other teams' data. To see the full race track, visit the home page.
 
 ### For Admins
 
 1. Click **"Admin Login"** button on the homepage (or go to /admin)
 2. Enter password: `hackathon2026`
 3. Monitor all teams on the dashboard
-4. Lock/unlock tasks to control the competition flow
-5. Click "View" on any team to see full details and audit log
-6. Use "Undo" to revert the last change for a team
-7. Use "Reset" to completely reset a team (requires confirmation)
+4. **Edit tasks**: Update task names, descriptions, and due dates
+5. Lock/unlock tasks to control the competition flow
+6. Click "View" on any team to see full details and audit log
+7. Use "Undo" to revert the last change for a team
+8. Use "Reset" to completely reset a team (requires confirmation)
 
 ## 📊 Data Model
 
