@@ -27,6 +27,7 @@ npm run dev
 |--------|--------|
 | Login | Use `team1-20` and `hackathon2026-1-20` |
 | Logout | Click "Logout" button in header |
+| Edit team name | Click pencil icon next to team name |
 | Complete task | Check the checkbox |
 | Add notes | Type and click "Save Notes" |
 | Add link | Fill form and click "Add Link" |
