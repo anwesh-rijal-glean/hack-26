@@ -51,9 +51,35 @@ export interface AuditEvent {
   payload?: any;
 }
 
+export interface RubricCriterion {
+  id: string;
+  title: string;
+  description: string;
+  maxPoints: number;
+}
+
+export interface TeamScore {
+  criterionId: string;
+  score: number; // 0 to maxPoints
+  comments?: string;
+}
+
+export interface Scorecard {
+  id: string;
+  judgeId: string;
+  judgeName: string;
+  teamId: string;
+  scores: TeamScore[];
+  totalScore: number;
+  submittedAt?: string; // ISO timestamp, undefined if draft
+  updatedAt: string;
+}
+
 export interface AppState {
   tasks: Task[];
   teams: Team[];
   auditLog: AuditEvent[];
+  rubric: RubricCriterion[];
+  scorecards: Scorecard[];
 }
 

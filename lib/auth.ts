@@ -1,9 +1,11 @@
-import { TEAM_USERS } from "./seed";
+import { TEAM_USERS, JUDGE_USERS } from "./seed";
 
 export interface AuthenticatedUser {
   username: string;
   teamId: string;
-  type: "team" | "admin";
+  type: "team" | "admin" | "judge";
+  judgeId?: string;
+  judgeName?: string;
 }
 
 // Team authentication
@@ -40,9 +42,32 @@ export function authenticateAdmin(password: string): AuthenticatedUser | null {
   return null;
 }
 
+// Judge authentication
+export function authenticateJudge(
+  username: string,
+  password: string
+): AuthenticatedUser | null {
+  const judge = JUDGE_USERS.find(
+    (j) => j.username === username && j.password === password
+  );
+
+  if (judge) {
+    return {
+      username: judge.username,
+      teamId: "", // Judges don't have teams
+      type: "judge",
+      judgeId: judge.id,
+      judgeName: judge.name,
+    };
+  }
+
+  return null;
+}
+
 // Session management
 const TEAM_AUTH_KEY = "team-auth";
 const ADMIN_AUTH_KEY = "admin-authed";
+const JUDGE_AUTH_KEY = "judge-auth";
 
 export function saveTeamAuth(user: AuthenticatedUser): void {
   sessionStorage.setItem(TEAM_AUTH_KEY, JSON.stringify(user));
@@ -74,4 +99,24 @@ export function isAdminAuthed(): boolean {
 
 export function clearAdminAuth(): void {
   sessionStorage.removeItem(ADMIN_AUTH_KEY);
+}
+
+export function saveJudgeAuth(user: AuthenticatedUser): void {
+  sessionStorage.setItem(JUDGE_AUTH_KEY, JSON.stringify(user));
+}
+
+export function getJudgeAuth(): AuthenticatedUser | null {
+  const data = sessionStorage.getItem(JUDGE_AUTH_KEY);
+  if (data) {
+    try {
+      return JSON.parse(data);
+    } catch {
+      return null;
+    }
+  }
+  return null;
+}
+
+export function clearJudgeAuth(): void {
+  sessionStorage.removeItem(JUDGE_AUTH_KEY);
 }
