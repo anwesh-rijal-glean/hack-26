@@ -9,6 +9,7 @@ import { TaskEditor } from "@/components/TaskEditor";
 import { TeamDetailDrawer } from "@/components/TeamDetailDrawer";
 import { Racetrack } from "@/components/Racetrack";
 import { ScorecardManager } from "@/components/ScorecardManager";
+import { FinalistSelector } from "@/components/FinalistSelector";
 import { ToastProvider, useToast } from "@/components/ui/toast";
 import { Button } from "@/components/ui/button";
 import { ArrowLeft } from "lucide-react";
@@ -24,11 +25,13 @@ function AdminViewContent() {
   const tasks = useStore((state) => state.tasks);
   const rubric = useStore((state) => state.rubric);
   const scorecards = useStore((state) => state.scorecards);
+  const finalistTeamIds = useStore((state) => state.finalistTeamIds);
   const lockTask = useStore((state) => state.lockTask);
   const updateTask = useStore((state) => state.updateTask);
   const resetTeam = useStore((state) => state.resetTeam);
   const undoLast = useStore((state) => state.undoLast);
   const updateRubric = useStore((state) => state.updateRubric);
+  const toggleFinalist = useStore((state) => state.toggleFinalist);
   const initializeStore = useStore((state) => state.initializeStore);
 
   const { showToast } = useToast();
@@ -76,6 +79,17 @@ function AdminViewContent() {
   const handleUpdateRubric = (newRubric: RubricCriterion[]) => {
     updateRubric(newRubric);
     showToast("Rubric updated successfully!", "success");
+  };
+
+  const handleToggleFinalist = (teamId: string) => {
+    toggleFinalist(teamId);
+    const isFinalist = finalistTeamIds.includes(teamId);
+    showToast(
+      isFinalist
+        ? "Team removed from finalists"
+        : "Team added to finalists",
+      "success"
+    );
   };
 
   const handleLogout = () => {
@@ -178,6 +192,15 @@ function AdminViewContent() {
             onViewDetails={handleViewDetails}
             onUndo={handleUndo}
             onReset={handleReset}
+          />
+        </div>
+
+        {/* Finalist Selection */}
+        <div className="mb-6">
+          <FinalistSelector
+            teams={teams}
+            finalistTeamIds={finalistTeamIds}
+            onToggleFinalist={handleToggleFinalist}
           />
         </div>
 

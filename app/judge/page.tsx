@@ -7,7 +7,6 @@ import { ScorecardForm } from "@/components/ScorecardForm";
 import { Button } from "@/components/ui/button";
 import { ToastProvider, useToast } from "@/components/ui/toast";
 import { AuthenticatedUser, getJudgeAuth, saveJudgeAuth, clearJudgeAuth } from "@/lib/auth";
-import { FINALIST_TEAM_IDS } from "@/lib/seed";
 import { ArrowLeft, LogOut } from "lucide-react";
 import Link from "next/link";
 import { Scorecard } from "@/lib/types";
@@ -19,6 +18,7 @@ function JudgePortalContent() {
   const teams = useStore((state) => state.teams);
   const rubric = useStore((state) => state.rubric);
   const scorecards = useStore((state) => state.scorecards);
+  const finalistTeamIds = useStore((state) => state.finalistTeamIds);
   const saveScorecard = useStore((state) => state.saveScorecard);
   const submitScorecard = useStore((state) => state.submitScorecard);
   const initializeStore = useStore((state) => state.initializeStore);
@@ -59,7 +59,7 @@ function JudgePortalContent() {
     return <JudgeLoginGate onAuthenticated={handleAuthenticated} />;
   }
 
-  const finalistTeams = teams.filter((team) => FINALIST_TEAM_IDS.includes(team.id));
+  const finalistTeams = teams.filter((team) => finalistTeamIds.includes(team.id));
   const selectedTeam = finalistTeams.find((t) => t.id === selectedTeamId);
 
   // Get judge's scorecards
@@ -128,7 +128,18 @@ function JudgePortalContent() {
             <h2 className="text-2xl font-bold text-gray-900 mb-6">
               Select a Team to Score
             </h2>
-            <div className="grid md:grid-cols-2 lg:grid-cols-3 gap-4">
+            
+            {finalistTeams.length === 0 ? (
+              <div className="p-8 bg-yellow-50 border-2 border-yellow-400 rounded-lg text-center">
+                <p className="text-xl font-semibold text-yellow-800 mb-2">
+                  ⚠️ No Finalist Teams Selected
+                </p>
+                <p className="text-gray-700">
+                  The admin hasn't selected any finalist teams yet. Please check back later or contact the admin.
+                </p>
+              </div>
+            ) : (
+              <div className="grid md:grid-cols-2 lg:grid-cols-3 gap-4">
               {finalistTeams.map((team) => {
                 const scorecard = myScorecards.find((s) => s.teamId === team.id);
                 const isSubmitted = !!scorecard?.submittedAt;
@@ -183,7 +194,8 @@ function JudgePortalContent() {
                   </button>
                 );
               })}
-            </div>
+              </div>
+            )}
           </div>
         ) : (
           /* Scorecard Form */
