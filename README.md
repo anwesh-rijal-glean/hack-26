@@ -5,6 +5,7 @@ A real-time progress tracking application for hackathon competitions. Track 20 t
 ## 🚀 Features
 
 ### Team View
+- **Team Customization**: Edit your team name and choose from 60+ icons to personalize your identity
 - **Progress Tracking**: Teams can check off completed milestones
 - **Notes Management**: Add and edit team notes
 - **Evidence Links**: Submit links to demos, repos, and documentation
@@ -74,11 +75,14 @@ Navigate to [http://localhost:3000](http://localhost:3000)
    - Username: `team1` to `team20` (e.g., `team5`)
    - Password: `hackathon2026-1` to `hackathon2026-20` (e.g., `hackathon2026-5`)
 3. You'll only see your own team's dashboard (cannot view other teams)
-4. Check off tasks as you complete them (locked tasks can't be modified)
-5. Add notes about your progress
-6. Submit evidence links (GitHub repo, demo video, etc.)
-7. Watch your horse advance on the race track!
-8. Logout when done to protect your team's data
+4. **Customize your team**:
+   - Click your team icon to choose from 60+ emojis (animals, objects, symbols, and more!)
+   - Click the edit icon next to your name to rename your team
+5. Check off tasks as you complete them (locked tasks can't be modified)
+6. Add notes about your progress
+7. Submit evidence links (GitHub repo, demo video, etc.)
+8. Watch your horse advance on the race track!
+9. Logout when done to protect your team's data
 
 **Important**: Each team can only edit their own progress. You cannot modify other teams' data.
 

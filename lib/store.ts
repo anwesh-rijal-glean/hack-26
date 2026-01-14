@@ -8,6 +8,8 @@ interface StoreState extends AppState {
   // Actions
   toggleTask: (teamId: string, taskIndex: number, actor: Actor) => void;
   setNotes: (teamId: string, notes: string, actor: Actor) => void;
+  setTeamName: (teamId: string, name: string, actor: Actor) => void;
+  setTeamIcon: (teamId: string, icon: string, actor: Actor) => void;
   addLink: (teamId: string, link: Link, actor: Actor) => void;
   removeLink: (teamId: string, linkId: string, actor: Actor) => void;
   lockTask: (taskId: number, locked: boolean, actor: Actor) => void;
@@ -101,6 +103,65 @@ export const useStore = create<StoreState>()(
             actor,
             teamId,
             { from: team.notes, to: notes }
+          );
+
+          return {
+            teams: state.teams.map((t) => (t.id === teamId ? updatedTeam : t)),
+            auditLog: [auditEvent, ...state.auditLog],
+          };
+        });
+      },
+
+      setTeamName: (teamId: string, name: string, actor: Actor) => {
+        set((state) => {
+          const team = state.teams.find((t) => t.id === teamId);
+          if (!team) return state;
+
+          // Validate name is not empty
+          const trimmedName = name.trim();
+          if (!trimmedName) return state;
+
+          const updatedTeam: Team = {
+            ...team,
+            name: trimmedName,
+            updatedAt: new Date().toISOString(),
+            lastUpdatedBy: actor.type === "admin" ? "Admin" : trimmedName,
+          };
+
+          const auditEvent = createAuditEvent(
+            "EDIT_NOTES", // Reusing EDIT_NOTES action type for simplicity
+            actor,
+            teamId,
+            { from: team.name, to: trimmedName, field: "name" }
+          );
+
+          return {
+            teams: state.teams.map((t) => (t.id === teamId ? updatedTeam : t)),
+            auditLog: [auditEvent, ...state.auditLog],
+          };
+        });
+      },
+
+      setTeamIcon: (teamId: string, icon: string, actor: Actor) => {
+        set((state) => {
+          const team = state.teams.find((t) => t.id === teamId);
+          if (!team) return state;
+
+          // Validate icon is not empty
+          if (!icon.trim()) return state;
+
+          const updatedTeam: Team = {
+            ...team,
+            horseIcon: icon,
+            updatedAt: new Date().toISOString(),
+            lastUpdatedBy: actor.type === "admin" ? "Admin" : team.name,
+          };
+
+          const auditEvent = createAuditEvent(
+            "EDIT_NOTES", // Reusing EDIT_NOTES action type for simplicity
+            actor,
+            teamId,
+            { from: team.horseIcon, to: icon, field: "icon" }
           );
 
           return {
