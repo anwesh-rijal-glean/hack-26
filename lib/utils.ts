@@ -28,12 +28,3 @@ export function getTasksCompleted(progress: boolean[]): number {
   return progress.filter(Boolean).length;
 }
 
-export function getNextMilestone(tasks: { id: number; title: string; locked?: boolean }[], progress: boolean[]): string {
-  for (let i = 0; i < progress.length; i++) {
-    if (!progress[i]) {
-      return tasks[i]?.title || `Task ${i + 1}`;
-    }
-  }
-  return "All tasks completed! 🎉";
-}
-
