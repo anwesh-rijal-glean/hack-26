@@ -4,6 +4,7 @@ import { useState, useEffect } from "react";
 import { useStore } from "@/lib/store";
 import { TeamLoginGate } from "@/components/TeamLoginGate";
 import { TeamNameEditor } from "@/components/TeamNameEditor";
+import { TeamIconPicker } from "@/components/TeamIconPicker";
 import { TaskChecklist } from "@/components/TaskChecklist";
 import { LinksManager } from "@/components/LinksManager";
 import { Racetrack } from "@/components/Racetrack";
@@ -33,6 +34,7 @@ function TeamViewContent() {
   const toggleTask = useStore((state) => state.toggleTask);
   const setNotesStore = useStore((state) => state.setNotes);
   const setTeamNameStore = useStore((state) => state.setTeamName);
+  const setTeamIconStore = useStore((state) => state.setTeamIcon);
   const addLink = useStore((state) => state.addLink);
   const removeLink = useStore((state) => state.removeLink);
   const initializeStore = useStore((state) => state.initializeStore);
@@ -117,6 +119,15 @@ function TeamViewContent() {
     showToast("Team name updated!", "success");
   };
 
+  const handleSaveTeamIcon = (newIcon: string) => {
+    if (!authenticatedUser || !selectedTeam) return;
+    setTeamIconStore(authenticatedUser.teamId, newIcon, {
+      type: "team",
+      id: authenticatedUser.teamId,
+    });
+    showToast("Team icon updated!", "success");
+  };
+
   const handleAddLink = (link: LinkType) => {
     if (!authenticatedUser || !selectedTeam) return;
     addLink(authenticatedUser.teamId, link, {
@@ -184,8 +195,11 @@ function TeamViewContent() {
             <div className="bg-white rounded-xl shadow-lg p-6 mb-6 border-2 border-blue-200">
               <div className="flex items-center justify-between mb-4">
                 <div className="flex-1">
-                  <div className="flex items-center gap-2 mb-2">
-                    <span className="text-3xl">{selectedTeam.horseIcon}</span>
+                  <div className="flex items-center gap-3 mb-2">
+                    <TeamIconPicker
+                      currentIcon={selectedTeam.horseIcon}
+                      onSave={handleSaveTeamIcon}
+                    />
                     <TeamNameEditor
                       currentName={selectedTeam.name}
                       onSave={handleSaveTeamName}

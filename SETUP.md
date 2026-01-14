@@ -35,7 +35,9 @@ The app will start at [http://localhost:3000](http://localhost:3000)
 2. Login with your team credentials:
    - **Username**: `team1` to `team20` (e.g., `team5`)
    - **Password**: `hackathon2026-1` to `hackathon2026-20` (e.g., `hackathon2026-5`)
-3. Customize your team name by clicking the edit (✏️) icon
+3. Customize your team:
+   - Click your team icon to choose from 60+ emojis
+   - Click the edit (✏️) icon to change your team name
 4. Start checking off tasks as you complete them!
 
 **Example Team Logins:**
