@@ -112,7 +112,7 @@ Navigate to [http://localhost:3000](http://localhost:3000)
 ### For Admins
 
 1. Click **"Admin Login"** button on the homepage (or go to /admin)
-2. Enter password: `hackathon2026`
+2. Enter password: `************`
 3. Monitor all teams on the dashboard
 4. **Edit tasks**: Update task names, descriptions, and due dates
 5. Lock/unlock tasks to control the competition flow
@@ -275,7 +275,7 @@ The app uses Tailwind CSS. Edit `tailwind.config.ts` for theme customization or 
 - Check the audit log for recent changes
 
 ### Admin view not loading
-- Verify password is correct: `hackathon2026`
+- Verify password is correct
 - Clear sessionStorage and try again
 - Check browser console for errors
 
