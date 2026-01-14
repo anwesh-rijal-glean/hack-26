@@ -6,13 +6,10 @@ import { TeamLoginGate } from "@/components/TeamLoginGate";
 import { TeamNameEditor } from "@/components/TeamNameEditor";
 import { TeamIconPicker } from "@/components/TeamIconPicker";
 import { TaskChecklist } from "@/components/TaskChecklist";
-import { LinksManager } from "@/components/LinksManager";
-import { Textarea } from "@/components/ui/textarea";
 import { Button } from "@/components/ui/button";
 import { ToastProvider, useToast } from "@/components/ui/toast";
-import { Link as LinkType } from "@/lib/types";
 import { getTasksCompleted } from "@/lib/utils";
-import { ArrowLeft, Save, LogOut } from "lucide-react";
+import { ArrowLeft, LogOut } from "lucide-react";
 import Link from "next/link";
 import confetti from "canvas-confetti";
 import {
@@ -25,17 +22,13 @@ import {
 function TeamViewContent() {
   const [authenticatedUser, setAuthenticatedUser] =
     useState<AuthenticatedUser | null>(null);
-  const [notes, setNotes] = useState("");
   const [hasShownConfetti, setHasShownConfetti] = useState(false);
 
   const teams = useStore((state) => state.teams);
   const tasks = useStore((state) => state.tasks);
   const toggleTask = useStore((state) => state.toggleTask);
-  const setNotesStore = useStore((state) => state.setNotes);
   const setTeamNameStore = useStore((state) => state.setTeamName);
   const setTeamIconStore = useStore((state) => state.setTeamIcon);
-  const addLink = useStore((state) => state.addLink);
-  const removeLink = useStore((state) => state.removeLink);
   const initializeStore = useStore((state) => state.initializeStore);
 
   const { showToast } = useToast();
@@ -64,10 +57,9 @@ function TeamViewContent() {
     showToast("Logged out successfully!", "info");
   };
 
-  // Load notes when team is selected
+  // Initialize confetti state when team is selected
   useEffect(() => {
     if (selectedTeam) {
-      setNotes(selectedTeam.notes);
       const completed = getTasksCompleted(selectedTeam.progress);
       setHasShownConfetti(completed === 10);
     }
@@ -100,15 +92,6 @@ function TeamViewContent() {
     showToast("Task updated!", "success");
   };
 
-  const handleSaveNotes = () => {
-    if (!authenticatedUser || !selectedTeam) return;
-    setNotesStore(authenticatedUser.teamId, notes, {
-      type: "team",
-      id: authenticatedUser.teamId,
-    });
-    showToast("Notes saved!", "success");
-  };
-
   const handleSaveTeamName = (newName: string) => {
     if (!authenticatedUser || !selectedTeam) return;
     setTeamNameStore(authenticatedUser.teamId, newName, {
@@ -125,24 +108,6 @@ function TeamViewContent() {
       id: authenticatedUser.teamId,
     });
     showToast("Team icon updated!", "success");
-  };
-
-  const handleAddLink = (link: LinkType) => {
-    if (!authenticatedUser || !selectedTeam) return;
-    addLink(authenticatedUser.teamId, link, {
-      type: "team",
-      id: authenticatedUser.teamId,
-    });
-    showToast("Link added!", "success");
-  };
-
-  const handleRemoveLink = (linkId: string) => {
-    if (!authenticatedUser || !selectedTeam) return;
-    removeLink(authenticatedUser.teamId, linkId, {
-      type: "team",
-      id: authenticatedUser.teamId,
-    });
-    showToast("Link removed!", "info");
   };
 
   if (!authenticatedUser) {
@@ -190,7 +155,7 @@ function TeamViewContent() {
             🏇 Glean SE Hackathon - 2026 - Team Dashboard
           </h1>
           <p className="text-gray-600">
-            Track your progress and submit evidence for completed milestones
+            Track your progress and share your work via Drive and Slack
           </p>
         </div>
 
@@ -286,29 +251,42 @@ function TeamViewContent() {
                 />
               </div>
 
-              {/* Notes */}
-              <div className="mb-6">
-                <h3 className="text-lg font-semibold text-gray-900 mb-3">
-                  Team Notes
+              {/* Submission Instructions */}
+              <div className="bg-gradient-to-br from-blue-50 to-indigo-50 rounded-lg p-6 border-2 border-blue-300">
+                <h3 className="text-lg font-semibold text-gray-900 mb-4 flex items-center gap-2">
+                  📤 Submit Your Work
                 </h3>
-                <Textarea
-                  placeholder="Add notes about your progress, challenges, or achievements..."
-                  value={notes}
-                  onChange={(e) => setNotes(e.target.value)}
-                  className="min-h-[120px] mb-2"
-                />
-                <Button onClick={handleSaveNotes} className="w-full">
-                  <Save size={16} className="mr-2" />
-                  Save Notes
-                </Button>
-              </div>
+                <div className="space-y-4">
+                  <div className="bg-white rounded-lg p-4 border border-blue-200">
+                    <p className="text-sm font-semibold text-gray-700 mb-2 flex items-center gap-2">
+                      📁 Upload Files to Shared Folder
+                    </p>
+                    <a
+                      href="https://drive.google.com/drive/folders/1NUEZn-Psh5vtgJSdgXtPr6IIabaTlF6i"
+                      target="_blank"
+                      rel="noopener noreferrer"
+                      className="text-blue-600 hover:text-blue-800 hover:underline text-sm break-all font-medium"
+                    >
+                      https://drive.google.com/drive/folders/1NUEZn-Psh5vtgJSdgXtPr6IIabaTlF6i
+                    </a>
+                  </div>
+                  
+                  <div className="bg-white rounded-lg p-4 border border-blue-200">
+                    <p className="text-sm font-semibold text-gray-700 mb-2 flex items-center gap-2">
+                      💬 Share Updates on Slack
+                    </p>
+                    <p className="text-blue-600 font-mono text-sm font-medium">
+                      #gko-fy2027-se-hackathon
+                    </p>
+                  </div>
 
-              {/* Links Manager */}
-              <LinksManager
-                links={selectedTeam.links}
-                onAdd={handleAddLink}
-                onRemove={handleRemoveLink}
-              />
+                  <div className="bg-yellow-50 rounded-lg p-3 border border-yellow-300">
+                    <p className="text-xs text-yellow-800">
+                      <strong>💡 Reminder:</strong> Please upload all project files, demos, and documentation to the shared Drive folder and post your status updates to the Slack channel to keep everyone in the loop!
+                    </p>
+                  </div>
+                </div>
+              </div>
             </div>
           </>
         ) : (
