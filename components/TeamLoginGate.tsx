@@ -32,8 +32,11 @@ export function TeamLoginGate({ onAuthenticated }: TeamLoginGateProps) {
         <div className="text-center mb-6">
           <div className="text-6xl mb-4">🏇</div>
           <h1 className="text-3xl font-bold text-gray-900 mb-2">
-            Team Login
+            Glean SE Hackathon - 2026
           </h1>
+          <p className="text-lg font-semibold text-gray-700 mb-2">
+            Team Login
+          </p>
           <p className="text-gray-600">
             Enter your team credentials to access your dashboard
           </p>
@@ -46,7 +49,7 @@ export function TeamLoginGate({ onAuthenticated }: TeamLoginGateProps) {
             </label>
             <Input
               type="text"
-              placeholder="team1"
+              placeholder="Enter your username"
               value={username}
               onChange={(e) => {
                 setUsername(e.target.value);
@@ -61,7 +64,7 @@ export function TeamLoginGate({ onAuthenticated }: TeamLoginGateProps) {
             </label>
             <Input
               type="password"
-              placeholder="hackathon2026-1"
+              placeholder="Enter your password"
               value={password}
               onChange={(e) => {
                 setPassword(e.target.value);
@@ -79,19 +82,6 @@ export function TeamLoginGate({ onAuthenticated }: TeamLoginGateProps) {
             Login to Team Dashboard
           </Button>
         </form>
-
-        <div className="mt-6 p-4 bg-blue-50 rounded-lg">
-          <p className="text-xs text-gray-600 mb-2">
-            <strong>Team Credentials:</strong>
-          </p>
-          <div className="text-xs text-gray-600 space-y-1">
-            <p>• Username: <code className="bg-white px-1 py-0.5 rounded">team1</code> to <code className="bg-white px-1 py-0.5 rounded">team20</code></p>
-            <p>• Password: <code className="bg-white px-1 py-0.5 rounded">hackathon2026-1</code> to <code className="bg-white px-1 py-0.5 rounded">hackathon2026-20</code></p>
-          </div>
-          <p className="text-xs text-gray-500 mt-2">
-            <strong>Example:</strong> Username: team5, Password: hackathon2026-5
-          </p>
-        </div>
       </div>
     </div>
   );

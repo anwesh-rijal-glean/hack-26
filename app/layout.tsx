@@ -5,8 +5,8 @@ import "./globals.css";
 const inter = Inter({ subsets: ["latin"] });
 
 export const metadata: Metadata = {
-  title: "Hackathon Race Track",
-  description: "Track team progress in real-time during the hackathon",
+  title: "Glean SE Hackathon - 2026",
+  description: "Track team progress in real-time during Glean SE Hackathon - 2026",
 };
 
 export default function RootLayout({
