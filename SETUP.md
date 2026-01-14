@@ -24,9 +24,17 @@ The app will start at [http://localhost:3000](http://localhost:3000)
 
 ### 3. Access the Application
 
-- **Landing Page**: http://localhost:3000
+- **Live Dashboard** (Public): http://localhost:3000
 - **Team View**: http://localhost:3000/team
 - **Admin View**: http://localhost:3000/admin (password: `hackathon2026`)
+
+### 4. Display Setup (Optional)
+
+For venue displays:
+1. Open http://localhost:3000 on any computer
+2. Press **F11** for fullscreen mode
+3. The dashboard auto-refreshes every 5 seconds
+4. Optimized for 1920x1080 screens
 
 ## First Time Setup
 

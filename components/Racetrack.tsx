@@ -49,9 +49,9 @@ export function Racetrack({ teams, tasks }: RacetrackProps) {
         </p>
       </div>
 
-      <div className="grid lg:grid-cols-[1fr_300px] gap-6">
+      <div className="grid lg:grid-cols-[1fr_320px] gap-6">
         {/* Track Lanes */}
-        <div className="space-y-3 overflow-y-auto max-h-[600px] pr-2">
+        <div className="space-y-2 overflow-y-auto max-h-[720px] pr-2">
           {rankedTeams.map((team, index) => {
             const completed = getTasksCompleted(team.progress);
             const position = completed; // 0 to 10
@@ -60,24 +60,24 @@ export function Racetrack({ teams, tasks }: RacetrackProps) {
             return (
               <div
                 key={team.id}
-                className="relative bg-gradient-to-r from-gray-50 to-gray-100 rounded-lg p-3 border-2 border-gray-200 hover:border-blue-300 transition-colors"
+                className="relative bg-gradient-to-r from-gray-50 to-gray-100 rounded-lg p-4 border-2 border-gray-200 hover:border-blue-300 transition-colors"
               >
                 {/* Lane background with checkpoints */}
-                <div className="flex items-center gap-2 mb-2">
-                  <div className="flex items-center gap-2 min-w-[180px]">
-                    <span className="text-2xl">{team.horseIcon}</span>
+                <div className="flex items-center gap-3 mb-2">
+                  <div className="flex items-center gap-3 min-w-[200px]">
+                    <span className="text-3xl">{team.horseIcon}</span>
                     <div>
-                      <p className="font-semibold text-sm text-gray-900">
+                      <p className="font-semibold text-base text-gray-900">
                         {team.name}
                       </p>
-                      <p className="text-xs text-gray-500">
+                      <p className="text-sm text-gray-500">
                         {completed}/10 tasks
                       </p>
                     </div>
                   </div>
                   
                   {/* Track with position markers */}
-                  <div className="flex-1 relative h-12">
+                  <div className="flex-1 relative h-14">
                     {/* Background track */}
                     <div className="absolute inset-0 bg-gradient-to-r from-yellow-100 via-green-100 to-blue-200 rounded-full border-2 border-gray-300">
                       {/* Checkpoint markers */}
@@ -85,7 +85,7 @@ export function Racetrack({ teams, tasks }: RacetrackProps) {
                         {Array.from({ length: 11 }).map((_, i) => (
                           <div
                             key={i}
-                            className={`w-1 h-8 rounded-full ${
+                            className={`w-1.5 h-10 rounded-full ${
                               i === 0
                                 ? "bg-green-500"
                                 : i === 10
@@ -106,7 +106,7 @@ export function Racetrack({ teams, tasks }: RacetrackProps) {
                       }}
                     >
                       <div
-                        className="text-3xl filter drop-shadow-lg"
+                        className="text-4xl filter drop-shadow-lg"
                         style={{
                           color: team.color,
                         }}
@@ -118,7 +118,7 @@ export function Racetrack({ teams, tasks }: RacetrackProps) {
 
                   {/* Rank badge */}
                   <div
-                    className={`min-w-[40px] h-10 rounded-full flex items-center justify-center font-bold text-white ${
+                    className={`min-w-[48px] h-12 rounded-full flex items-center justify-center font-bold text-white text-lg ${
                       index === 0
                         ? "bg-yellow-500"
                         : index === 1
@@ -137,41 +137,45 @@ export function Racetrack({ teams, tasks }: RacetrackProps) {
         </div>
 
         {/* Ranking Sidebar */}
-        <div className="bg-gradient-to-b from-blue-50 to-purple-50 rounded-lg p-4 border-2 border-blue-200">
-          <h3 className="text-lg font-bold text-gray-900 mb-4 flex items-center gap-2">
+        <div className="bg-gradient-to-b from-blue-50 to-purple-50 rounded-lg p-5 border-2 border-blue-200">
+          <h3 className="text-xl font-bold text-gray-900 mb-5 flex items-center gap-2">
             <span>🏆</span> Leaderboard
           </h3>
-          <div className="space-y-2 max-h-[520px] overflow-y-auto">
-            {rankedTeams.slice(0, 10).map((team, index) => {
+          <div className="space-y-2 max-h-[640px] overflow-y-auto">
+            {rankedTeams.map((team, index) => {
               const completed = getTasksCompleted(team.progress);
               return (
                 <div
                   key={team.id}
-                  className={`p-3 rounded-lg ${
+                  className={`p-4 rounded-lg ${
                     index === 0
                       ? "bg-yellow-100 border-2 border-yellow-400"
+                      : index === 1
+                      ? "bg-gray-100 border-2 border-gray-400"
+                      : index === 2
+                      ? "bg-amber-100 border-2 border-amber-400"
                       : "bg-white border border-gray-200"
                   }`}
                 >
-                  <div className="flex items-center gap-2 mb-1">
-                    <span className="text-lg font-bold text-gray-600 min-w-[24px]">
+                  <div className="flex items-center gap-2 mb-2">
+                    <span className="text-xl font-bold text-gray-600 min-w-[28px]">
                       {index + 1}.
                     </span>
-                    <span className="text-xl">{team.horseIcon}</span>
+                    <span className="text-2xl">{team.horseIcon}</span>
                     <span className="font-semibold text-sm text-gray-900 flex-1 truncate">
                       {team.name}
                     </span>
                   </div>
-                  <div className="ml-8">
+                  <div className="ml-10">
                     <div className="flex items-center justify-between text-xs">
                       <span className="text-gray-600">Progress</span>
                       <span className="font-bold text-blue-600">
                         {completed}/10
                       </span>
                     </div>
-                    <div className="w-full bg-gray-200 rounded-full h-2 mt-1">
+                    <div className="w-full bg-gray-200 rounded-full h-2.5 mt-1">
                       <div
-                        className="bg-blue-500 h-2 rounded-full transition-all duration-500"
+                        className="bg-blue-500 h-2.5 rounded-full transition-all duration-500"
                         style={{ width: `${(completed / 10) * 100}%` }}
                       />
                     </div>
