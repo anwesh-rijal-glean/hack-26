@@ -152,7 +152,7 @@ function TeamViewContent() {
             </div>
           </div>
           <h1 className="text-4xl font-bold text-gray-900 mb-2">
-            🏇 Glean SE Hackathon - 2026 - Team Dashboard
+            🏇 Glean SE Hackathon 2027 - Team Dashboard
           </h1>
           <p className="text-gray-600">
             Track your progress and share your work via Drive and Slack

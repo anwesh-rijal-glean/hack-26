@@ -1,7 +1,7 @@
 "use client";
 
 import { Team, Task } from "@/lib/types";
-import { getTasksCompleted, getNextMilestone } from "@/lib/utils";
+import { getTasksCompleted } from "@/lib/utils";
 import { useMemo } from "react";
 
 interface RacetrackProps {
@@ -23,30 +23,12 @@ export function Racetrack({ teams, tasks }: RacetrackProps) {
     });
   }, [teams]);
 
-  const nextMilestone = useMemo(() => {
-    // Get the most common next milestone across all teams
-    const nextTasks = teams.map((team) => {
-      for (let i = 0; i < team.progress.length; i++) {
-        if (!team.progress[i]) {
-          return tasks[i]?.title || `Task ${i + 1}`;
-        }
-      }
-      return "Finished!";
-    });
-    
-    // Return most common or first one
-    return nextTasks[0] || "All tasks completed! 🎉";
-  }, [teams, tasks]);
-
   return (
     <div className="bg-gradient-to-b from-green-800 via-green-700 to-green-800 rounded-xl shadow-xl p-6 border-4 border-green-900">
       <div className="mb-6 bg-white/95 backdrop-blur-sm rounded-lg p-4 border-2 border-gray-300 shadow-md">
-        <h2 className="text-2xl font-bold text-gray-900 mb-2">
+        <h2 className="text-2xl font-bold text-gray-900">
           🏁 Live Race Track
         </h2>
-        <p className="text-sm text-gray-600">
-          Next Milestone: <span className="font-semibold">{nextMilestone}</span>
-        </p>
       </div>
 
       <div className="grid lg:grid-cols-[1fr_320px] gap-6">
