@@ -30,8 +30,11 @@ export function AdminPasswordGate({ onAuthenticated }: AdminPasswordGateProps) {
         <div className="text-center mb-6">
           <div className="text-6xl mb-4">👑</div>
           <h1 className="text-3xl font-bold text-gray-900 mb-2">
-            Admin Access
+            Glean SE Hackathon - 2026
           </h1>
+          <p className="text-lg font-semibold text-gray-700 mb-2">
+            Admin Access
+          </p>
           <p className="text-gray-600">
             Enter the admin password to continue
           </p>
@@ -60,13 +63,7 @@ export function AdminPasswordGate({ onAuthenticated }: AdminPasswordGateProps) {
           </Button>
         </form>
 
-        <div className="mt-6 p-4 bg-blue-50 rounded-lg">
-          <p className="text-xs text-gray-600 text-center">
-            <strong>Dev Note:</strong> Password is "hackathon2026"
-            <br />
-            TODO: Replace with real authentication
-          </p>
-        </div>
+        
       </div>
     </div>
   );
