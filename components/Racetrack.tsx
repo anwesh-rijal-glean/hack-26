@@ -95,7 +95,7 @@ export function Racetrack({ teams, tasks }: RacetrackProps) {
                       className="absolute top-0 bottom-0 flex items-center horse-transition z-10"
                       style={{
                         left: `${progressPercent}%`,
-                        transform: "translateX(-50%)",
+                        transform: "translateX(-50%) scaleX(-1)",
                       }}
                     >
                       <div
