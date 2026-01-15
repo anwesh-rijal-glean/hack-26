@@ -36,7 +36,7 @@ export default function HomePage() {
           <div className="flex items-center justify-between">
             <div>
               <h1 className="text-3xl font-bold text-gray-900">
-                🏁 Glean SE Hackathon 2027 - Live Results
+                🏁 Glean SE Hackathon 2026 - Live Results
               </h1>
               <p className="text-sm text-gray-600 mt-1">
                 Real-time competition dashboard · Updates every 5 seconds
