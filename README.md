@@ -41,7 +41,8 @@ A real-time progress tracking application for hackathon competitions. Track 20 t
 - **Framework**: Next.js 14+ (App Router)
 - **Language**: TypeScript
 - **Styling**: Tailwind CSS
-- **State Management**: Zustand with localStorage persistence
+- **State Management**: Zustand with API sync
+- **Database**: In-memory (server-side) - No external DB required!
 - **Authentication**: Client-side with sessionStorage (v1)
 - **Animations**: CSS transitions + canvas-confetti
 - **Icons**: Lucide React
@@ -73,6 +74,12 @@ yarn dev
 
 3. **Open in browser**:
 Navigate to [http://localhost:3000](http://localhost:3000)
+
+**That's it!** No database setup required. The app uses an **in-memory database** that automatically syncs changes across all users in real-time.
+
+💡 **Multi-User Testing**: Open multiple browser windows to see changes sync within 5 seconds!
+
+📚 **Learn More**: See [IN_MEMORY_DB.md](./IN_MEMORY_DB.md) for how it works and [DEPLOYMENT.md](./DEPLOYMENT.md) for deployment instructions.
 
 ## 🎮 Usage
 
@@ -264,20 +271,22 @@ The app uses Tailwind CSS. Edit `tailwind.config.ts` for theme customization or 
 
 ## 🐛 Troubleshooting
 
-### State not persisting
-- Clear browser localStorage and refresh
-- Check browser console for errors
-- Ensure you're using a modern browser with localStorage support
+### Changes not visible to other users
+- Both users must be on the same URL (localhost or deployed URL)
+- Wait 5 seconds for auto-sync to occur
+- Check browser console for API errors
+- Refresh both browsers
+
+### Data disappeared
+- **This is normal!** The server restarted, which resets the in-memory database
+- Data automatically resets to initial seed values
+- Perfect for hackathons - fresh start each session!
 
 ### Tasks not updating
 - Check if the task is locked (admin can unlock)
-- Ensure you've selected a team in Team View
+- Ensure you're logged in as a team
+- Wait 5 seconds for sync
 - Check the audit log for recent changes
-
-### Admin view not loading
-- Verify password is correct
-- Clear sessionStorage and try again
-- Check browser console for errors
 
 ## 📝 License
 
