@@ -302,7 +302,7 @@ createAuditEvent(action, actor, teamId, payload) {
 
 ## Performance Characteristics
 
-### Current Scale
+### Current Scale 1
 - **Teams**: 20
 - **Tasks per team**: 10
 - **Total checkboxes**: 200
