@@ -79,7 +79,7 @@ export function FinalistSelector({
       {finalistCount === 0 && (
         <div className="mt-6 p-4 bg-yellow-100 border border-yellow-400 rounded-lg">
           <p className="text-sm font-semibold text-yellow-800">
-            ⚠️ No finalists selected. Judges won't have any teams to score.
+            ⚠️ No finalists selected. Judges won&apos;t have any teams to score.
           </p>
         </div>
       )}

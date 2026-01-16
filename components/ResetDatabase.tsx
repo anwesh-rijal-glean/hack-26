@@ -7,7 +7,7 @@ import { RefreshCcw, AlertTriangle, X } from "lucide-react";
 import { authenticateAdmin } from "@/lib/auth";
 
 interface ResetDatabaseProps {
-  onReset: () => void;
+  onReset: (password: string) => void;
 }
 
 export function ResetDatabase({ onReset }: ResetDatabaseProps) {
@@ -45,7 +45,7 @@ export function ResetDatabase({ onReset }: ResetDatabaseProps) {
     localStorage.clear();
     
     // Call the reset callback
-    onReset();
+    onReset(password);
 
     // Wait a moment then reload the page to reinitialize
     setTimeout(() => {

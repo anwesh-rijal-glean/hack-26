@@ -1,6 +1,7 @@
 import { NextResponse } from 'next/server';
 import { updateTask, addAuditLog } from '@/lib/memory-db';
 import { generateId } from '@/lib/utils';
+import { AuditEvent, ActionType } from '@/lib/types';
 
 export async function PATCH(
   request: Request,
@@ -15,13 +16,21 @@ export async function PATCH(
     
     // Log the change
     if (actor) {
-      const auditEvent = {
+      let action: ActionType = "ADMIN_OVERRIDE";
+      let payload: Record<string, unknown> = { taskId, updates };
+
+      if (typeof updates?.locked === "boolean") {
+        action = updates.locked ? "LOCK_TASK" : "UNLOCK_TASK";
+        payload = { taskId, locked: updates.locked };
+      }
+
+      const auditEvent: AuditEvent = {
         id: generateId(),
-        timestamp: Date.now(),
+        ts: new Date().toISOString(),
         actor,
-        action: 'update_task',
-        target: { type: 'task' as const, id: String(taskId) },
-        details: updates
+        action,
+        teamId: "global",
+        payload,
       };
       await addAuditLog(auditEvent);
     }

@@ -1,6 +1,7 @@
 import { NextResponse } from 'next/server';
 import { getTeam, updateTeam, addAuditLog } from '@/lib/memory-db';
 import { generateId } from '@/lib/utils';
+import { AuditEvent, ActionType } from '@/lib/types';
 
 export async function GET(
   request: Request,
@@ -26,17 +27,44 @@ export async function PATCH(
     const body = await request.json();
     const { updates, actor } = body;
     
+    const existingTeam = await getTeam(params.id);
+    if (!existingTeam) {
+      return NextResponse.json({ error: 'Team not found' }, { status: 404 });
+    }
+
     const updatedTeam = await updateTeam(params.id, updates);
     
     // Log the change
     if (actor) {
-      const auditEvent = {
+      let action: ActionType = "ADMIN_OVERRIDE";
+      let payload: Record<string, unknown> = { updates };
+
+      if (Array.isArray(updates?.progress)) {
+        const previousProgress = existingTeam.progress || [];
+        const taskIndex = updates.progress.findIndex(
+          (value: boolean, index: number) => value !== previousProgress[index]
+        );
+
+        if (taskIndex !== -1) {
+          action = "TOGGLE_TASK";
+          payload = {
+            taskIndex,
+            from: previousProgress[taskIndex],
+            to: updates.progress[taskIndex],
+          };
+        }
+      } else if (typeof updates?.notes === "string") {
+        action = "EDIT_NOTES";
+        payload = { from: existingTeam.notes, to: updates.notes };
+      }
+
+      const auditEvent: AuditEvent = {
         id: generateId(),
-        timestamp: Date.now(),
+        ts: new Date().toISOString(),
         actor,
-        action: updates.name ? 'update_name' : updates.horseIcon ? 'update_icon' : 'update_tasks',
-        target: { type: 'team' as const, id: params.id },
-        details: updates
+        action,
+        teamId: params.id,
+        payload,
       };
       await addAuditLog(auditEvent);
     }

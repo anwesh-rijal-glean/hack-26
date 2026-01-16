@@ -99,8 +99,8 @@ function AdminViewContent() {
     clearAdminAuth();
   };
 
-  const handleResetDatabase = () => {
-    resetAllData();
+  const handleResetDatabase = (password: string) => {
+    resetAllData(password);
     showToast("Database reset successfully! Page will reload...", "success");
   };
 

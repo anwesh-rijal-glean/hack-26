@@ -135,7 +135,7 @@ function JudgePortalContent() {
                   ⚠️ No Finalist Teams Selected
                 </p>
                 <p className="text-gray-700">
-                  The admin hasn't selected any finalist teams yet. Please check back later or contact the admin.
+                  The admin hasn&apos;t selected any finalist teams yet. Please check back later or contact the admin.
                 </p>
               </div>
             ) : (
