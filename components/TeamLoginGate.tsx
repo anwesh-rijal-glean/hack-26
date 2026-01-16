@@ -32,7 +32,7 @@ export function TeamLoginGate({ onAuthenticated }: TeamLoginGateProps) {
         <div className="text-center mb-6">
           <div className="text-6xl mb-4">🏇</div>
           <h1 className="text-3xl font-bold text-gray-900 mb-2">
-            Glean SE Hackathon 2026
+            Glean SE Hackathon 2027
           </h1>
           <p className="text-lg font-semibold text-gray-700 mb-2">
             Team Login
