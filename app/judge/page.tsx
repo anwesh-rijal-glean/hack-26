@@ -93,7 +93,7 @@ function JudgePortalContent() {
             </div>
           </div>
           <h1 className="text-4xl font-bold text-gray-900 mb-2">
-            ⚖️ Glean SE Hackathon 2026 - Judge Portal
+            ⚖️ Glean SE Hackathon 2027 - Judge Portal
           </h1>
           <p className="text-gray-600">
             Score the finalist presentations

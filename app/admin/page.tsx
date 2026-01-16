@@ -127,7 +127,7 @@ function AdminViewContent() {
             </Button>
           </div>
           <h1 className="text-4xl font-bold text-gray-900 mb-2">
-            👑 Glean SE Hackathon 2026 - Admin Dashboard
+            👑 Glean SE Hackathon 2027 - Admin Dashboard
           </h1>
           <p className="text-gray-600">
             Monitor all teams, manage tasks, and control the competition
