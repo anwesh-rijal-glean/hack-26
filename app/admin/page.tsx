@@ -11,6 +11,8 @@ import { Racetrack } from "@/components/Racetrack";
 import { ScorecardManager } from "@/components/ScorecardManager";
 import { FinalistSelector } from "@/components/FinalistSelector";
 import { ResetDatabase } from "@/components/ResetDatabase";
+import { ExportData } from "@/components/ExportData";
+import { ImportData } from "@/components/ImportData";
 import { ToastProvider, useToast } from "@/components/ui/toast";
 import { Button } from "@/components/ui/button";
 import { ArrowLeft } from "lucide-react";
@@ -35,6 +37,7 @@ function AdminViewContent() {
   const toggleFinalist = useStore((state) => state.toggleFinalist);
   const resetAllData = useStore((state) => state.resetAllData);
   const initializeStore = useStore((state) => state.initializeStore);
+  const fetchAllData = useStore((state) => state.fetchAllData);
 
   const { showToast } = useToast();
 
@@ -224,9 +227,19 @@ function AdminViewContent() {
           />
         </div>
 
-        {/* Database Reset */}
+        {/* Data Management */}
         <div className="mb-6">
-          <ResetDatabase onReset={handleResetDatabase} />
+          <h2 className="text-2xl font-bold text-gray-900 mb-4">
+            🔧 Data Management
+          </h2>
+          <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
+            <ExportData />
+            <ImportData onImportSuccess={() => {
+              fetchAllData();
+              showToast("Data imported successfully!", "success");
+            }} />
+            <ResetDatabase onReset={handleResetDatabase} />
+          </div>
         </div>
       </div>
 
