@@ -105,19 +105,25 @@ export const useStore = create<StoreState>((set, get) => ({
 
       // Always update with what we got from the database
       // Even if it's empty, that's the real state
+      // Force new array references to trigger re-renders
       const newState = {
-        teams: teams || [],
-        tasks: tasks || [],
-        auditLog: auditLog || [],
-        scorecards: scorecards || [],
-        rubric: rubric || [],
-        finalistTeamIds: finalistIds || [],
+        teams: teams ? [...teams] : [],
+        tasks: tasks ? [...tasks] : [],
+        auditLog: auditLog ? [...auditLog] : [],
+        scorecards: scorecards ? [...scorecards] : [],
+        rubric: rubric ? [...rubric] : [],
+        finalistTeamIds: finalistIds ? [...finalistIds] : [],
         isLoading: false,
       };
       
       console.log('💾 Setting store state with:', {
         teams: newState.teams.length,
         sampleTeamNames: newState.teams.slice(0, 3).map(t => t.name),
+        sampleProgress: newState.teams.slice(0, 3).map(t => ({ 
+          id: t.id, 
+          completed: t.progress.filter(Boolean).length,
+          updatedAt: t.updatedAt 
+        })),
       });
       
       set(newState);

@@ -1,7 +1,7 @@
 "use client";
 
 import Link from "next/link";
-import { useEffect, useRef } from "react";
+import { useEffect, useRef, useState } from "react";
 import { useStore } from "@/lib/store";
 import { Racetrack } from "@/components/Racetrack";
 import { getTasksCompleted } from "@/lib/utils";
@@ -11,16 +11,54 @@ export default function HomePage() {
   const teams = useStore((state) => state.teams);
   const tasks = useStore((state) => state.tasks);
   const lastFetchRef = useRef<number>(0);
+  
+  // Force re-render when teams data changes by creating a unique key
+  const teamsKey = teams.map(t => `${t.id}-${t.progress.filter(Boolean).length}-${t.updatedAt}`).join('|');
+  
+  // Debug logging for component re-renders
+  useEffect(() => {
+    console.log('🎨 HomePage re-rendered with teams:', {
+      count: teams.length,
+      teamsKey: teamsKey.substring(0, 100) + '...',
+      sampleTeam: teams[0] ? {
+        name: teams[0].name,
+        completed: teams[0].progress.filter(Boolean).length,
+        updatedAt: teams[0].updatedAt
+      } : null
+    });
+  }, [teams, teamsKey]);
 
-  // Force fresh data fetch from database on mount and on focus
+  // Auto-refresh every 30 seconds for live dashboard
   useEffect(() => {
     // Fetch immediately on mount
     const now = Date.now();
     console.log('🔄 Home page mounted - fetching fresh data from database...');
+    
     fetchAllData().catch((error) => {
       console.error('❌ Failed to fetch initial data:', error);
     });
     lastFetchRef.current = now;
+
+    // Set up auto-refresh interval (30 seconds for live dashboard)
+    const REFRESH_INTERVAL = 30000; // 30 seconds
+    console.log('⏱️ Auto-refresh enabled: updates every 30 seconds');
+    
+    const intervalId = setInterval(() => {
+      if (document.visibilityState === 'visible') {
+        console.log('🔄 Auto-refresh - fetching latest data...', { 
+          currentTeamsCount: teams.length,
+          timestamp: new Date().toISOString() 
+        });
+        fetchAllData()
+          .then(() => {
+            console.log('✅ Auto-refresh complete - data fetched from database');
+          })
+          .catch((error) => {
+            console.error('❌ Auto-refresh failed:', error);
+          });
+        lastFetchRef.current = Date.now();
+      }
+    }, REFRESH_INTERVAL);
 
     // Also refresh when window gains focus (handles tab switching and navigation)
     const handleFocus = () => {
@@ -55,10 +93,12 @@ export default function HomePage() {
 
     // Cleanup
     return () => {
+      clearInterval(intervalId);
       window.removeEventListener('focus', handleFocus);
       document.removeEventListener('visibilitychange', handleVisibilityChange);
+      console.log('🛑 Auto-refresh stopped');
     };
-  }, []); // Empty array - but will re-run if component unmounts and remounts
+  }, [fetchAllData]);
 
   // Calculate stats
   const teamsCompleted = teams.filter((t) => getTasksCompleted(t.progress) === 10).length;
@@ -76,7 +116,11 @@ export default function HomePage() {
                 🏁 Glean SE Hackathon 2026 - Live Results
               </h1>
               <p className="text-sm text-gray-600 mt-1">
-                Real-time competition dashboard
+                Real-time competition dashboard • Press{" "}
+                <kbd className="px-2 py-1 bg-gray-100 border border-gray-300 rounded text-xs font-mono">
+                  Shift + F5
+                </kbd>{" "}
+                to refresh data
               </p>
             </div>
             <div className="flex gap-3">
@@ -130,19 +174,12 @@ export default function HomePage() {
           </div>
         </div>
 
-        {/* Race Track - Optimized for 1920x1080 */}
-        <div className="bg-white rounded-xl shadow-2xl border-2 border-gray-200">
-          <Racetrack teams={teams} tasks={tasks} />
-        </div>
-
-        {/* Footer Info */}
-        <div className="mt-6 text-center">
-          <p className="text-sm text-gray-600">
-            💡 <strong>Display Tip:</strong> Press F11 for fullscreen mode · Perfect for venue displays
-          </p>
+          {/* Race Track - Optimized for 1920x1080 */}
+          <div className="bg-white rounded-xl shadow-2xl border-2 border-gray-200">
+            <Racetrack key={teamsKey} teams={teams} tasks={tasks} />
+          </div>
         </div>
       </div>
-    </div>
-  );
-}
+    );
+  }
 

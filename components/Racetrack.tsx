@@ -2,7 +2,6 @@
 
 import { Team, Task } from "@/lib/types";
 import { getTasksCompleted } from "@/lib/utils";
-import { useMemo } from "react";
 
 interface RacetrackProps {
   teams: Team[];
@@ -11,17 +10,23 @@ interface RacetrackProps {
 
 export function Racetrack({ teams, tasks }: RacetrackProps) {
   // Sort teams by progress (descending), then by updatedAt (ascending for earlier = better)
-  const rankedTeams = useMemo(() => {
-    return [...teams].sort((a, b) => {
-      const aCompleted = getTasksCompleted(a.progress);
-      const bCompleted = getTasksCompleted(b.progress);
-      if (aCompleted !== bCompleted) {
-        return bCompleted - aCompleted;
-      }
-      // Earlier updatedAt is better (reached this milestone first)
-      return new Date(a.updatedAt).getTime() - new Date(b.updatedAt).getTime();
-    });
-  }, [teams]);
+  // Removed useMemo to ensure fresh sorting on every render
+  console.log('🏁 Racetrack: Computing ranked teams with', teams.length, 'teams');
+  console.log('🏁 Sample team progress:', teams.slice(0, 3).map(t => ({
+    name: t.name,
+    completed: getTasksCompleted(t.progress),
+    updatedAt: t.updatedAt
+  })));
+  
+  const rankedTeams = [...teams].sort((a, b) => {
+    const aCompleted = getTasksCompleted(a.progress);
+    const bCompleted = getTasksCompleted(b.progress);
+    if (aCompleted !== bCompleted) {
+      return bCompleted - aCompleted;
+    }
+    // Earlier updatedAt is better (reached this milestone first)
+    return new Date(a.updatedAt).getTime() - new Date(b.updatedAt).getTime();
+  });
 
   return (
     <div className="bg-gradient-to-b from-green-800 via-green-700 to-green-800 rounded-xl shadow-xl p-6 border-4 border-green-900">
