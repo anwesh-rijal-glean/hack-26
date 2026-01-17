@@ -1,10 +1,16 @@
 import { NextResponse } from 'next/server';
-import { getFinalistTeamIds, updateFinalistTeamIds } from '@/lib/memory-db';
+import { getFinalistTeamIds, updateFinalistTeamIds } from '@/lib/db';
 
 export async function GET() {
   try {
     const finalistIds = await getFinalistTeamIds();
-    return NextResponse.json(finalistIds);
+    return NextResponse.json(finalistIds, {
+      headers: {
+        'Cache-Control': 'no-store, no-cache, must-revalidate, proxy-revalidate',
+        'Pragma': 'no-cache',
+        'Expires': '0',
+      },
+    });
   } catch (error) {
     console.error('Error fetching finalist teams:', error);
     return NextResponse.json({ error: 'Failed to fetch finalist teams' }, { status: 500 });

@@ -19,19 +19,37 @@ function JudgePortalContent() {
   const rubric = useStore((state) => state.rubric);
   const scorecards = useStore((state) => state.scorecards);
   const finalistTeamIds = useStore((state) => state.finalistTeamIds);
+  const isLoading = useStore((state) => state.isLoading);
   const saveScorecard = useStore((state) => state.saveScorecard);
   const submitScorecard = useStore((state) => state.submitScorecard);
-  const initializeStore = useStore((state) => state.initializeStore);
+  const fetchAllData = useStore((state) => state.fetchAllData);
 
   const { showToast } = useToast();
 
   useEffect(() => {
-    initializeStore();
+    // Force fresh data fetch from database
+    console.log('🔄 Judge page mounted - fetching fresh data from database...');
+    fetchAllData().catch((error) => {
+      console.error('❌ Failed to fetch initial data:', error);
+      showToast("⚠️ Failed to load data. Please refresh the page.", "error");
+    });
+    
     const user = getJudgeAuth();
     if (user && user.type === "judge") {
       setAuthenticatedUser(user);
     }
-  }, [initializeStore]);
+  }, [fetchAllData, showToast]);
+
+  // Debug logging for rubric
+  useEffect(() => {
+    console.log('🔍 Judge page state:', {
+      teams: teams.length,
+      rubric: rubric.length,
+      rubricData: rubric,
+      finalistTeamIds: finalistTeamIds.length,
+      isLoading,
+    });
+  }, [teams, rubric, finalistTeamIds, isLoading]);
 
   const handleAuthenticated = (user: AuthenticatedUser) => {
     setAuthenticatedUser(user);
@@ -73,12 +91,13 @@ function JudgePortalContent() {
         {/* Header */}
         <div className="mb-8">
           <div className="flex items-center justify-between mb-4">
-            <Link href="/">
-              <Button variant="ghost">
-                <ArrowLeft size={16} className="mr-2" />
-                Back to Home
-              </Button>
-            </Link>
+            <Button 
+              variant="ghost"
+              onClick={() => window.location.href = '/'}
+            >
+              <ArrowLeft size={16} className="mr-2" />
+              Back to Home
+            </Button>
             <div className="flex items-center gap-4">
               <div className="text-right">
                 <p className="text-sm text-gray-600">Logged in as</p>
@@ -208,14 +227,34 @@ function JudgePortalContent() {
               <ArrowLeft size={16} className="mr-2" />
               Back to Team List
             </Button>
-            <ScorecardForm
-              team={selectedTeam}
-              rubric={rubric}
-              judgeId={authenticatedUser.judgeId!}
-              judgeName={authenticatedUser.judgeName!}
-              existingScorecard={myScorecards.find((s) => s.teamId === selectedTeam.id)}
-              onSave={handleSaveScorecard}
-            />
+            {isLoading ? (
+              <div className="text-center py-12">
+                <p className="text-gray-500">Loading rubric...</p>
+              </div>
+            ) : rubric.length === 0 ? (
+              <div className="bg-yellow-50 border-2 border-yellow-300 rounded-lg p-6 text-center">
+                <p className="text-lg font-semibold text-yellow-800 mb-2">
+                  ⚠️ Rubric Not Found
+                </p>
+                <p className="text-sm text-yellow-700 mb-4">
+                  The judging rubric has not been initialized in the database.
+                </p>
+                <p className="text-xs text-yellow-600">
+                  Please ask an admin to run the rubric initialization SQL script.
+                  <br />
+                  Check console for debug info.
+                </p>
+              </div>
+            ) : (
+              <ScorecardForm
+                team={selectedTeam}
+                rubric={rubric}
+                judgeId={authenticatedUser.judgeId!}
+                judgeName={authenticatedUser.judgeName!}
+                existingScorecard={myScorecards.find((s) => s.teamId === selectedTeam.id)}
+                onSave={handleSaveScorecard}
+              />
+            )}
           </div>
         )}
       </div>

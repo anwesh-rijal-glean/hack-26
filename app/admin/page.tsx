@@ -34,17 +34,23 @@ function AdminViewContent() {
   const updateRubric = useStore((state) => state.updateRubric);
   const toggleFinalist = useStore((state) => state.toggleFinalist);
   const resetAllData = useStore((state) => state.resetAllData);
-  const initializeStore = useStore((state) => state.initializeStore);
+  const fetchAllData = useStore((state) => state.fetchAllData);
 
   const { showToast } = useToast();
 
   useEffect(() => {
-    initializeStore();
+    // Force fresh data fetch from database
+    console.log('🔄 Admin page mounted - fetching fresh data from database...');
+    fetchAllData().catch((error) => {
+      console.error('❌ Failed to fetch initial data:', error);
+      showToast("⚠️ Failed to load data. Please refresh the page.", "error");
+    });
+    
     // Check sessionStorage for existing auth
     if (isAdminAuthed()) {
       setIsAuthenticated(true);
     }
-  }, [initializeStore]);
+  }, [fetchAllData, showToast]);
 
   const handleAuthenticated = () => {
     setIsAuthenticated(true);
@@ -55,43 +61,77 @@ function AdminViewContent() {
     setSelectedTeamId(teamId);
   };
 
-  const handleUndo = (teamId: string) => {
-    undoLast(teamId, { type: "admin", id: "admin" });
-    showToast("Last action undone!", "info");
+  const handleUndo = async (teamId: string) => {
+    try {
+      await undoLast(teamId, { type: "admin", id: "admin" });
+      showToast("Last action undone!", "info");
+    } catch (error) {
+      console.error('Failed to undo:', error);
+      showToast("❌ Failed to undo. Please check if database is configured.", "error");
+    }
   };
 
-  const handleReset = (teamId: string) => {
-    resetTeam(teamId, { type: "admin", id: "admin" });
-    showToast("Team reset successfully!", "success");
+  const handleReset = async (teamId: string) => {
+    try {
+      await resetTeam(teamId, { type: "admin", id: "admin" });
+      showToast("Team reset successfully!", "success");
+    } catch (error) {
+      console.error('Failed to reset team:', error);
+      showToast("❌ Failed to reset. Please check if database is configured.", "error");
+    }
   };
 
-  const handleToggleLock = (taskId: number, locked: boolean) => {
-    lockTask(taskId, locked, { type: "admin", id: "admin" });
-    showToast(
-      locked ? "Task locked!" : "Task unlocked!",
-      locked ? "info" : "success"
-    );
+  const handleToggleLock = async (taskId: number, locked: boolean) => {
+    try {
+      await lockTask(taskId, locked, { type: "admin", id: "admin" });
+      showToast(
+        locked ? "Task locked!" : "Task unlocked!",
+        locked ? "info" : "success"
+      );
+    } catch (error) {
+      console.error('Failed to lock/unlock task:', error);
+      showToast("❌ Failed to update task lock. Please check if database is configured.", "error");
+    }
   };
 
-  const handleUpdateTask = (taskId: number, updates: Partial<Task>) => {
-    updateTask(taskId, updates, { type: "admin", id: "admin" });
-    showToast("Task updated successfully!", "success");
+  const handleUpdateTask = async (taskId: number, updates: Partial<Task>) => {
+    try {
+      await updateTask(taskId, updates, { type: "admin", id: "admin" });
+      showToast("Task updated successfully!", "success");
+    } catch (error) {
+      console.error('Failed to update task:', error);
+      showToast("❌ Failed to update task. Please check if database is configured.", "error");
+    }
   };
 
-  const handleUpdateRubric = (newRubric: RubricCriterion[]) => {
-    updateRubric(newRubric);
-    showToast("Rubric updated successfully!", "success");
+  const handleUpdateRubric = async (newRubric: RubricCriterion[]) => {
+    try {
+      await updateRubric(newRubric);
+      showToast("Rubric updated successfully!", "success");
+    } catch (error) {
+      console.error('Failed to update rubric:', error);
+      showToast("❌ Failed to update rubric. Please check if database is configured.", "error");
+    }
   };
 
-  const handleToggleFinalist = (teamId: string) => {
-    toggleFinalist(teamId);
+  const handleToggleFinalist = async (teamId: string) => {
     const isFinalist = finalistTeamIds.includes(teamId);
-    showToast(
-      isFinalist
-        ? "Team removed from finalists"
-        : "Team added to finalists",
-      "success"
-    );
+    
+    try {
+      await toggleFinalist(teamId);
+      showToast(
+        isFinalist
+          ? "Team removed from finalists"
+          : "Team added to finalists",
+        "success"
+      );
+    } catch (error) {
+      console.error('Failed to toggle finalist:', error);
+      showToast(
+        "❌ Failed to update finalists. Please check if database is configured.",
+        "error"
+      );
+    }
   };
 
   const handleLogout = () => {
@@ -99,9 +139,14 @@ function AdminViewContent() {
     clearAdminAuth();
   };
 
-  const handleResetDatabase = (password: string) => {
-    resetAllData(password);
-    showToast("Database reset successfully! Page will reload...", "success");
+  const handleResetDatabase = async (password: string) => {
+    try {
+      await resetAllData(password);
+      showToast("✅ Database reset successfully! Page will reload...", "success");
+    } catch (error) {
+      console.error('Failed to reset database:', error);
+      showToast("❌ Failed to reset database. Check console for details.", "error");
+    }
   };
 
   if (!isAuthenticated) {
@@ -116,12 +161,13 @@ function AdminViewContent() {
         {/* Header */}
         <div className="mb-8">
           <div className="flex items-center justify-between mb-4">
-            <Link href="/">
-              <Button variant="ghost">
-                <ArrowLeft size={16} className="mr-2" />
-                Back to Home
-              </Button>
-            </Link>
+            <Button 
+              variant="ghost"
+              onClick={() => window.location.href = '/'}
+            >
+              <ArrowLeft size={16} className="mr-2" />
+              Back to Home
+            </Button>
             <Button variant="outline" onClick={handleLogout}>
               Logout
             </Button>

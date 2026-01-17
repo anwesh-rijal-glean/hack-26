@@ -1,27 +1,64 @@
 "use client";
 
 import Link from "next/link";
-import { useEffect } from "react";
+import { useEffect, useRef } from "react";
 import { useStore } from "@/lib/store";
 import { Racetrack } from "@/components/Racetrack";
 import { getTasksCompleted } from "@/lib/utils";
 
 export default function HomePage() {
-  const initializeStore = useStore((state) => state.initializeStore);
+  const fetchAllData = useStore((state) => state.fetchAllData);
   const teams = useStore((state) => state.teams);
   const tasks = useStore((state) => state.tasks);
+  const lastFetchRef = useRef<number>(0);
 
+  // Force fresh data fetch from database on mount and on focus
   useEffect(() => {
-    initializeStore();
+    // Fetch immediately on mount
+    const now = Date.now();
+    console.log('🔄 Home page mounted - fetching fresh data from database...');
+    fetchAllData().catch((error) => {
+      console.error('❌ Failed to fetch initial data:', error);
+    });
+    lastFetchRef.current = now;
 
-    // Auto-refresh every 5 seconds to show live updates
-    const interval = setInterval(() => {
-      // Force re-render by touching the store (no-op but triggers subscribers)
-      initializeStore();
-    }, 5000);
+    // Also refresh when window gains focus (handles tab switching and navigation)
+    const handleFocus = () => {
+      const timeSinceLastFetch = Date.now() - lastFetchRef.current;
+      // Only fetch if it's been more than 1 second since last fetch (avoid duplicate fetches)
+      if (timeSinceLastFetch > 1000) {
+        console.log('🔄 Window focused - refreshing data...');
+        fetchAllData().catch((error) => {
+          console.error('❌ Failed to refresh data:', error);
+        });
+        lastFetchRef.current = Date.now();
+      }
+    };
 
-    return () => clearInterval(interval);
-  }, [initializeStore]);
+    // Refresh when tab becomes visible
+    const handleVisibilityChange = () => {
+      if (document.visibilityState === 'visible') {
+        const timeSinceLastFetch = Date.now() - lastFetchRef.current;
+        if (timeSinceLastFetch > 1000) {
+          console.log('🔄 Page became visible - refreshing data...');
+          fetchAllData().catch((error) => {
+            console.error('❌ Failed to refresh data:', error);
+          });
+          lastFetchRef.current = Date.now();
+        }
+      }
+    };
+
+    // Add event listeners
+    window.addEventListener('focus', handleFocus);
+    document.addEventListener('visibilitychange', handleVisibilityChange);
+
+    // Cleanup
+    return () => {
+      window.removeEventListener('focus', handleFocus);
+      document.removeEventListener('visibilitychange', handleVisibilityChange);
+    };
+  }, []); // Empty array - but will re-run if component unmounts and remounts
 
   // Calculate stats
   const teamsCompleted = teams.filter((t) => getTasksCompleted(t.progress) === 10).length;
@@ -36,10 +73,10 @@ export default function HomePage() {
           <div className="flex items-center justify-between">
             <div>
               <h1 className="text-3xl font-bold text-gray-900">
-                🏁 Glean SE Hackathon 2027 - Live Results
+                🏁 Glean SE Hackathon 2026 - Live Results
               </h1>
               <p className="text-sm text-gray-600 mt-1">
-                Real-time competition dashboard · Updates every 5 seconds
+                Real-time competition dashboard
               </p>
             </div>
             <div className="flex gap-3">

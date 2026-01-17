@@ -29,7 +29,7 @@ export function authenticateTeam(
 }
 
 // Admin authentication
-const ADMIN_PASSWORD = "hackathon2026";
+import { ADMIN_PASSWORD } from "./seed";
 
 export function authenticateAdmin(password: string): AuthenticatedUser | null {
   if (password === ADMIN_PASSWORD) {

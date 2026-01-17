@@ -41,16 +41,16 @@ export function ResetDatabase({ onReset }: ResetDatabaseProps) {
     setIsResetting(true);
     setError(false);
 
-    // Clear localStorage
-    localStorage.clear();
+    // NOTE: Don't clear localStorage here - it would log the admin out!
+    // The API will handle the database reset
     
-    // Call the reset callback
+    // Call the reset callback (which calls the API)
     onReset(password);
 
-    // Wait a moment then reload the page to reinitialize
+    // Wait a moment then reload the page to fetch fresh data
     setTimeout(() => {
       window.location.reload();
-    }, 500);
+    }, 1000);
   };
 
   return (
@@ -117,8 +117,9 @@ export function ResetDatabase({ onReset }: ResetDatabaseProps) {
                   <li>Reset all tasks to initial state</li>
                   <li>Delete all scorecards and judging data</li>
                   <li>Clear all audit logs and history</li>
-                  <li>Reset finalist selections</li>
+                  <li>Reset finalist selections to default</li>
                   <li>Reload with fresh seed data</li>
+                  <li className="text-green-700 font-semibold">✓ Rubric will be preserved</li>
                 </ul>
                 <div className="bg-red-50 border-2 border-red-400 rounded-lg p-4">
                   <p className="text-sm font-bold text-red-800 text-center">

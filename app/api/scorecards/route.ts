@@ -1,10 +1,16 @@
 import { NextResponse } from 'next/server';
-import { getAllScorecards, saveScorecard } from '@/lib/memory-db';
+import { getAllScorecards, saveScorecard } from '@/lib/db';
 
 export async function GET() {
   try {
     const scorecards = await getAllScorecards();
-    return NextResponse.json(scorecards);
+    return NextResponse.json(scorecards, {
+      headers: {
+        'Cache-Control': 'no-store, no-cache, must-revalidate, proxy-revalidate',
+        'Pragma': 'no-cache',
+        'Expires': '0',
+      },
+    });
   } catch (error) {
     console.error('Error fetching scorecards:', error);
     return NextResponse.json({ error: 'Failed to fetch scorecards' }, { status: 500 });

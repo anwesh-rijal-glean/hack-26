@@ -1,5 +1,5 @@
 import { NextResponse } from 'next/server';
-import { getScorecard } from '@/lib/memory-db';
+import { getScorecard } from '@/lib/db';
 
 export async function GET(
   request: Request,
