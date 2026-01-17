@@ -2,7 +2,20 @@
 
 ## Installation Steps
 
-### 1. Install Dependencies
+### 1. Set Up Supabase Database
+
+**⚠️ Important:** You need to set up Supabase first!
+
+See **[SUPABASE_SETUP.md](./SUPABASE_SETUP.md)** for detailed step-by-step instructions.
+
+**Quick version:**
+1. Create free Supabase account at https://supabase.com
+2. Create a new project
+3. Run `supabase/schema.sql` in SQL Editor
+4. Get your project URL and anon key
+5. Create `.env.local` with your credentials
+
+### 2. Install Dependencies
 
 ```bash
 npm install
@@ -14,7 +27,7 @@ or if you prefer pnpm:
 pnpm install
 ```
 
-### 2. Start Development Server
+### 3. Start Development Server
 
 ```bash
 npm run dev
@@ -22,30 +35,31 @@ npm run dev
 
 The app will start at [http://localhost:3000](http://localhost:3000)
 
-### 3. Access the Application
+### 4. Access the Application
 
-**No database setup required!** The app uses an in-memory database that automatically syncs changes across all users.
+The app uses **Supabase PostgreSQL** for persistent, shared storage:
 
 💡 **How it works:**
-- Data is stored in server memory
-- Changes sync to all users via database (refresh page to see updates)
-- Data resets when server restarts (perfect for hackathons!)
+- Data is stored in PostgreSQL database
+- Changes sync to database and all users see updates
+- Data persists across deployments and restarts
+- Perfect for production hackathons!
 
-### 4. URLs
+### 5. URLs
 
 - **Live Dashboard** (Public): http://localhost:3000
 - **Team View**: http://localhost:3000/team
 - **Admin View**: http://localhost:3000/admin (password: `hackathon-admin-2026`)
 - **Judge Portal**: http://localhost:3000/judge
 
-### 5. Multi-User Testing
+### 6. Multi-User Testing
 
 Open the app in multiple browsers/devices to see real-time sync:
 1. Open http://localhost:3000 in Browser 1
 2. Open http://localhost:3000 in Browser 2 (or incognito)
 3. Make changes in one → see them in the other! ✨
 
-### 6. Display Setup (Optional)
+### 7. Display Setup (Optional)
 
 For venue displays:
 1. Open http://localhost:3000 on any computer
@@ -85,33 +99,32 @@ For venue displays:
 ## Data Persistence
 
 **How it works:**
-- Data is stored in server memory (not localStorage)
-- All users see the same data
-- Changes persist to database (refresh to see updates)
-- **Data resets when server restarts** (by design!)
+- Data is stored in Supabase PostgreSQL database
+- All users see the same data in real-time
+- Changes persist across deployments and server restarts
+- Automatic initialization with seed data on first run
 
 **Perfect for:**
-- ✅ Hackathons
-- ✅ Demos
-- ✅ Time-limited events
-- ✅ Internal tools
+- ✅ Production hackathons
+- ✅ Multi-day events
+- ✅ Real competitions
+- ✅ Data you want to keep
 
 **To reset data manually:**
 
 Option 1: Admin Panel
 1. Go to Admin View
 2. Click "Reset Database" button
-3. Enter admin password: `hackathon-admin-2026`
+3. Enter admin password: `hackathon2026`
 4. Confirm reset
+5. Data will be reset to seed values (rubric is preserved)
 
 Option 2: API Call
 ```bash
 curl -X POST http://localhost:3000/api/init \
   -H "Content-Type: application/json" \
-  -d '{"password": "hackathon-admin-2026"}'
+  -d '{"password": "hackathon2026"}'
 ```
-
-💡 **Note:** If you need persistent storage that survives server restarts, see `DATABASE_SETUP.md` for Postgres setup.
 
 ## Pre-configured Data
 
@@ -166,20 +179,23 @@ See **[DEPLOYMENT.md](./DEPLOYMENT.md)** for detailed deployment instructions.
 **Problem**: Can't login as team
 - **Solution**: Make sure you're using the correct format: username `team1` (not Team1), password `hackathon2026-1`
 
+**Problem**: ⚠️ Database Not Configured error
+- **Solution**: Set up Supabase and add environment variables to `.env.local`. See SUPABASE_SETUP.md
+
 **Problem**: Teams not loading
-- **Solution**: Refresh the page. The server may have restarted.
+- **Solution**: Check Supabase is configured correctly. Verify database tables exist (run `supabase/schema.sql`)
 
 **Problem**: Can't check off tasks
 - **Solution**: Check if task is locked (admin can unlock)
 
 **Problem**: Admin password not working
-- **Solution**: Make sure you're using `hackathon-admin-2026` (all lowercase with hyphens)
+- **Solution**: Make sure you're using `hackathon2026` (lowercase, no hyphens)
 
 **Problem**: Changes not visible to other users
-- **Solution**: Check that both users are on the same URL. Refresh browser to see updates. Check browser console for errors.
+- **Solution**: Check that both users are on the same URL. Refresh browser to see updates. Check Supabase dashboard logs.
 
-**Problem**: Data disappeared
-- **Solution**: This is normal! Server restarted. Data resets to initial values automatically.
+**Problem**: Data not persisting
+- **Solution**: Verify `.env.local` has correct Supabase credentials. Check browser console for API errors.
 
 ## Support
 

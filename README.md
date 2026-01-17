@@ -212,14 +212,16 @@ hackathon/
 └── package.json
 ```
 
-## 🔄 State Management
+## 🔄 State Management & Database
 
-The app uses **Zustand** for state management with localStorage persistence:
+The app uses **Zustand** for client-side state management with **Supabase PostgreSQL** for persistent storage:
 
-- State is automatically saved to `localStorage`
-- Data persists across page refreshes
+- All data is stored in PostgreSQL database
+- Changes are synced to database via API calls
+- Optimistic updates for instant UI feedback
 - All changes trigger audit log entries
 - Admin actions are clearly marked in the audit trail
+- Data persists across deployments and restarts
 
 ## 🚧 TODO: Production Readiness
 
@@ -281,12 +283,14 @@ The app uses Tailwind CSS. Edit `tailwind.config.ts` for theme customization or 
 - Both users must be on the same URL (localhost or deployed URL)
 - Refresh the browser to see latest changes
 - Check browser console for API errors
-- Verify database is properly configured
+- Verify Supabase environment variables are set correctly
+- Check Supabase dashboard logs for database errors
 
-### Data disappeared
-- **This is normal!** The server restarted, which resets the in-memory database
-- Data automatically resets to initial seed values
-- Perfect for hackathons - fresh start each session!
+### Data not persisting
+- Verify `.env.local` has correct `NEXT_PUBLIC_SUPABASE_URL` and `NEXT_PUBLIC_SUPABASE_ANON_KEY`
+- Check Supabase dashboard to ensure tables exist (run `supabase/schema.sql`)
+- For Vercel deployments, verify environment variables are set in project settings
+- Restart dev server after changing environment variables
 
 ### Tasks not updating
 - Check if the task is locked (admin can unlock)

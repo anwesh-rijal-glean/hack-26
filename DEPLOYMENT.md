@@ -1,57 +1,71 @@
 # 🚀 Deployment Guide
 
-This app uses an **in-memory database** for multi-user synchronization. No external database setup required!
+This app uses **Supabase PostgreSQL** for persistent, multi-user synchronization.
 
 ## ✨ Key Features
 
-- ✅ **Zero Configuration** - No database setup needed
-- ✅ **Multi-User Sync** - Changes visible to all users in real-time (5 second polling)
-- ✅ **Easy Deployment** - Just deploy to Vercel and you're done
-- ✅ **Auto-Reset** - Data automatically resets on server restart
+- ✅ **Persistent Storage** - Data survives deployments and restarts
+- ✅ **Multi-User Sync** - Changes visible to all users in real-time
+- ✅ **Production Ready** - Real database for reliable data storage
+- ✅ **Free Tier** - Perfect for hackathons with Supabase free plan
 
 ## 📦 How It Works
 
-### In-Memory Database
+### Supabase PostgreSQL Database
 
-The app uses a server-side in-memory store (`lib/memory-db.ts`) that:
-- Stores all data in server memory
-- Persists across requests during the same server session
-- Syncs changes to all connected users
-- Resets to initial seed data when the server restarts
+The app uses Supabase PostgreSQL (`lib/db.ts`) that:
+- Stores all data in PostgreSQL database
+- Persists across deployments and server restarts
+- Syncs changes to all connected users via API calls
+- Automatically initializes with seed data on first run
+- Cache-busting ensures fresh data on every page load
 
 ### Data Persistence
 
-**During Server Session:**
-- ✅ All changes are saved
-- ✅ Visible to all users instantly (5s polling)
-- ✅ Survives page refreshes
-
-**After Server Restart:**
-- 🔄 Data resets to initial seed values
-- 🔄 Perfect for demos and hackathons
+**Always:**
+- ✅ All changes are saved to database
+- ✅ Visible to all users (refresh to see updates)
+- ✅ Survives server restarts and deployments
+- ✅ Perfect for production hackathons
 
 ## 🚀 Deployment Steps
 
-### 1. Install Dependencies
+### 1. Set Up Supabase Database
+
+**⚠️ Important:** Set up Supabase first! See **[SUPABASE_SETUP.md](./SUPABASE_SETUP.md)**
+
+Quick steps:
+1. Create free Supabase account at https://supabase.com
+2. Create new project
+3. Run `supabase/schema.sql` in SQL Editor
+4. Get your project URL and anon key
+
+### 2. Configure Environment Variables in Vercel
+
+1. Go to [Vercel Dashboard](https://vercel.com/dashboard)
+2. Select your project (or create new)
+3. Go to **Settings** → **Environment Variables**
+4. Add these variables for **Production, Preview, and Development**:
+   - `NEXT_PUBLIC_SUPABASE_URL` = your Supabase project URL
+   - `NEXT_PUBLIC_SUPABASE_ANON_KEY` = your Supabase anon key
+
+### 3. Install Dependencies
 
 ```bash
 npm install
 ```
 
-### 2. Deploy to Vercel
+### 4. Deploy to Vercel
 
 ```bash
 # Install Vercel CLI
 npm i -g vercel
 
-# Deploy
-vercel
-
-# Or deploy to production
+# Deploy to production
 vercel --prod
 ```
 
-That's it! No database configuration needed! 🎉
+That's it! Your app will connect to Supabase automatically! 🎉
 
 ### 3. Test Multi-User Sync
 
