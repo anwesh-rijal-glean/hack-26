@@ -1,10 +1,16 @@
 import { NextResponse } from 'next/server';
-import { getAuditLog, addAuditLog } from '@/lib/memory-db';
+import { getAuditLog, addAuditLog } from '@/lib/db';
 
 export async function GET() {
   try {
     const auditLog = await getAuditLog();
-    return NextResponse.json(auditLog);
+    return NextResponse.json(auditLog, {
+      headers: {
+        'Cache-Control': 'no-store, no-cache, must-revalidate, proxy-revalidate',
+        'Pragma': 'no-cache',
+        'Expires': '0',
+      },
+    });
   } catch (error) {
     console.error('Error fetching audit log:', error);
     return NextResponse.json({ error: 'Failed to fetch audit log' }, { status: 500 });

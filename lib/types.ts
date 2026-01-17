@@ -4,6 +4,7 @@ export interface Task {
   description?: string;
   dueDate?: string;
   locked?: boolean;
+  points?: number;
 }
 
 export interface Link {

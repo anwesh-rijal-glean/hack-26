@@ -28,7 +28,7 @@ The app will start at [http://localhost:3000](http://localhost:3000)
 
 💡 **How it works:**
 - Data is stored in server memory
-- Changes sync to all users via API (polling every 5 seconds)
+- Changes sync to all users via database (refresh page to see updates)
 - Data resets when server restarts (perfect for hackathons!)
 
 ### 4. URLs
@@ -50,7 +50,7 @@ Open the app in multiple browsers/devices to see real-time sync:
 For venue displays:
 1. Open http://localhost:3000 on any computer
 2. Press **F11** for fullscreen mode
-3. The dashboard auto-refreshes every 5 seconds
+3. Refresh the page to see latest updates
 4. Optimized for 1920x1080 screens
 
 ## First Time Setup
@@ -87,7 +87,7 @@ For venue displays:
 **How it works:**
 - Data is stored in server memory (not localStorage)
 - All users see the same data
-- Changes sync automatically every 5 seconds
+- Changes persist to database (refresh to see updates)
 - **Data resets when server restarts** (by design!)
 
 **Perfect for:**
@@ -176,7 +176,7 @@ See **[DEPLOYMENT.md](./DEPLOYMENT.md)** for detailed deployment instructions.
 - **Solution**: Make sure you're using `hackathon-admin-2026` (all lowercase with hyphens)
 
 **Problem**: Changes not visible to other users
-- **Solution**: Check that both users are on the same URL. Wait 5 seconds for sync. Check browser console for errors.
+- **Solution**: Check that both users are on the same URL. Refresh browser to see updates. Check browser console for errors.
 
 **Problem**: Data disappeared
 - **Solution**: This is normal! Server restarted. Data resets to initial values automatically.

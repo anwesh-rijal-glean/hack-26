@@ -1,5 +1,5 @@
 import { NextResponse } from 'next/server';
-import { getTeam, updateTeam, addAuditLog } from '@/lib/memory-db';
+import { getTeam, updateTeam, addAuditLog } from '@/lib/db';
 import { generateId } from '@/lib/utils';
 import { AuditEvent, ActionType } from '@/lib/types';
 

@@ -6,10 +6,10 @@ A real-time progress tracking application for hackathon competitions. Track 20 t
 
 ### Live Dashboard (Home Screen)
 - **Full-Screen Race Track**: View all 20 teams competing in real-time without login
-- **Auto-Refresh**: Updates every 5 seconds to show latest progress
 - **Live Statistics**: Total teams, finished teams, average progress, and milestones
 - **1920x1080 Optimized**: Perfect for displaying on venue screens
 - **Public View**: Anyone can watch the competition unfold
+- **Refresh to Update**: Reload the page to see latest progress
 
 ### Team View
 - **Team Customization**: Edit your team name and choose from 60+ icons to personalize your identity
@@ -42,58 +42,64 @@ A real-time progress tracking application for hackathon competitions. Track 20 t
 - **Language**: TypeScript
 - **Styling**: Tailwind CSS
 - **State Management**: Zustand with API sync
-- **Database**: In-memory (server-side) - No external DB required!
+- **Database**: Supabase PostgreSQL (persistent, shared state)
 - **Authentication**: Client-side with sessionStorage (v1)
 - **Animations**: CSS transitions + canvas-confetti
 - **Icons**: Lucide React
 
 ## 📦 Installation
 
+**⚠️ Important:** You need to set up Supabase first! See **[SUPABASE_SETUP.md](./SUPABASE_SETUP.md)** for detailed instructions.
+
 ### Prerequisites
 - Node.js 18+ or compatible package manager (npm, pnpm, yarn)
+- **Supabase account** (free tier is perfect!)
 
 ### Setup Steps
 
-1. **Install dependencies**:
+1. **Set up Supabase database**:
+   - Follow the detailed guide: **[SUPABASE_SETUP.md](./SUPABASE_SETUP.md)**
+   - Creates your PostgreSQL database (takes ~5 minutes)
+   - Get your `SUPABASE_URL` and `SUPABASE_ANON_KEY`
+
+2. **Create `.env.local`** file in project root:
+```env
+NEXT_PUBLIC_SUPABASE_URL=https://xxxxx.supabase.co
+NEXT_PUBLIC_SUPABASE_ANON_KEY=eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9...
+```
+
+3. **Install dependencies**:
 ```bash
 npm install
-# or
-pnpm install
-# or
-yarn install
 ```
 
-2. **Run development server**:
+4. **Run development server**:
 ```bash
 npm run dev
-# or
-pnpm dev
-# or
-yarn dev
 ```
 
-3. **Open in browser**:
+5. **Open in browser**:
 Navigate to [http://localhost:3000](http://localhost:3000)
 
-**That's it!** No database setup required. The app uses an **in-memory database** that automatically syncs changes across all users in real-time.
+**That's it!** The app will automatically initialize the database with seed data on first run.
 
-💡 **Multi-User Testing**: Open multiple browser windows to see changes sync within 5 seconds!
+💡 **Multi-User Testing**: Open multiple browser windows or share your URL - all users see the same data in real-time!
 
-📚 **Learn More**: See [IN_MEMORY_DB.md](./IN_MEMORY_DB.md) for how it works and [DEPLOYMENT.md](./DEPLOYMENT.md) for deployment instructions.
+📚 **Learn More**: See [SUPABASE_SETUP.md](./SUPABASE_SETUP.md) for detailed setup and [DEPLOYMENT.md](./DEPLOYMENT.md) for Vercel deployment.
 
 ## 🎮 Usage
 
 ### For Spectators / Venue Display
 
 1. Open the **Home Page** (http://localhost:3000)
-2. View the live race track with all 20 teams competing in real-time
+2. View the live race track with all 20 teams competing
 3. Press **F11** for fullscreen mode (recommended for venue displays)
-4. Updates automatically every 5 seconds
+4. Refresh the page to see latest updates
 5. No login required - perfect for public display screens!
 
 **Display Tips:**
 - Optimized for 1920x1080 resolution
-- Auto-refreshes to show live progress
+- Refresh page to show latest progress
 - Shows top statistics and full leaderboard
 - Can be projected on big screens at the venue
 
@@ -273,9 +279,9 @@ The app uses Tailwind CSS. Edit `tailwind.config.ts` for theme customization or 
 
 ### Changes not visible to other users
 - Both users must be on the same URL (localhost or deployed URL)
-- Wait 5 seconds for auto-sync to occur
+- Refresh the browser to see latest changes
 - Check browser console for API errors
-- Refresh both browsers
+- Verify database is properly configured
 
 ### Data disappeared
 - **This is normal!** The server restarted, which resets the in-memory database
@@ -285,7 +291,8 @@ The app uses Tailwind CSS. Edit `tailwind.config.ts` for theme customization or 
 ### Tasks not updating
 - Check if the task is locked (admin can unlock)
 - Ensure you're logged in as a team
-- Wait 5 seconds for sync
+- Refresh the page to see updates
+- Check browser console for errors
 - Check the audit log for recent changes
 
 ## 📝 License

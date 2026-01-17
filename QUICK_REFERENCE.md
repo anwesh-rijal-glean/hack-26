@@ -28,7 +28,7 @@ npm run dev
 |--------|--------|
 | View race | Open http://localhost:3000 |
 | Fullscreen | Press F11 |
-| Live updates | Auto-refreshes every 5 seconds |
+| Live updates | Refresh page to see latest changes |
 | See stats | Top bar shows key metrics |
 | View leaderboard | Right sidebar shows all 20 teams |
 

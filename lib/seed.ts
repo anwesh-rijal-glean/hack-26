@@ -103,7 +103,7 @@ export const INITIAL_TASKS: Task[] = [
 ];
 
 const TEAM_NAMES = [
-  "Team 1 - Code Ninjas",
+  "Team 1 - Bro Code Ninjas",
   "Team 2 - Bug Busters",
   "Team 3 - Syntax Samurai",
   "Team 4 - Pixel Pioneers",
@@ -196,3 +196,6 @@ export const FINALIST_TEAM_IDS: string[] = [
   "team-1", "team-2", "team-3", "team-4", "team-5",
   "team-6", "team-7", "team-8", "team-9", "team-10",
 ];
+
+// Admin password for authentication and database reset
+export const ADMIN_PASSWORD = "hackathon2026";
