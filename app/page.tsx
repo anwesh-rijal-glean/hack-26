@@ -46,6 +46,7 @@ export default function HomePage() {
     return () => {
       isActive = false;
       document.removeEventListener('visibilitychange', handleVisibilityChange);
+      console.log('🛑 Auto-refresh stopped');
     };
   }, [fetchAllData]);
 
@@ -132,16 +133,10 @@ export default function HomePage() {
           </div>
         </div>
 
-        {/* Race Track - Optimized for 1920x1080 */}
-        <div className="bg-white rounded-xl shadow-2xl border-2 border-gray-200">
-          <Racetrack teams={teams} tasks={tasks} />
-        </div>
-
-        {/* Footer Info */}
-        <div className="mt-6 text-center">
-          <p className="text-sm text-gray-600">
-            💡 <strong>Display Tip:</strong> Press F11 for fullscreen mode · Perfect for venue displays
-          </p>
+          {/* Race Track - Optimized for 1920x1080 */}
+          <div className="bg-white rounded-xl shadow-2xl border-2 border-gray-200">
+            <Racetrack key={teamsKey} teams={teams} tasks={tasks} />
+          </div>
         </div>
       </div>
     </div>
