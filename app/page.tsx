@@ -70,7 +70,6 @@ export default function HomePage() {
 
   return (
     <div className="min-h-screen bg-gradient-to-br from-blue-50 via-indigo-50 to-purple-50">
-      {/* Header with Login Buttons */}
       <div className="bg-white border-b-2 border-gray-200 shadow-sm">
         <div className="container mx-auto px-6 py-4">
           <div className="flex items-center justify-between">
@@ -103,9 +102,7 @@ export default function HomePage() {
         </div>
       </div>
 
-      {/* Main Content - Full Screen Race Track */}
       <div className="container mx-auto px-6 py-6">
-        {/* Stats Bar */}
         <div className="grid grid-cols-4 gap-4 mb-6">
           <div className="bg-white rounded-lg shadow-md p-4 border-l-4 border-blue-500">
             <p className="text-sm font-semibold text-gray-600 mb-1">
@@ -133,10 +130,14 @@ export default function HomePage() {
           </div>
         </div>
 
-          {/* Race Track - Optimized for 1920x1080 */}
-          <div className="bg-white rounded-xl shadow-2xl border-2 border-gray-200">
-            <Racetrack key={teamsKey} teams={teams} tasks={tasks} />
-          </div>
+        <div className="bg-white rounded-xl shadow-2xl border-2 border-gray-200">
+          <Racetrack teams={teams} tasks={tasks} />
+        </div>
+
+        <div className="mt-6 text-center">
+          <p className="text-sm text-gray-600">
+            💡 <strong>Display Tip:</strong> Press F11 for fullscreen mode · Perfect for venue displays
+          </p>
         </div>
       </div>
     </div>

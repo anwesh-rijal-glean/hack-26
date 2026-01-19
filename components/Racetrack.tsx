@@ -25,7 +25,7 @@ export function Racetrack({ teams, tasks }: RacetrackProps) {
     <div className="bg-gradient-to-b from-green-800 via-green-700 to-green-800 rounded-xl shadow-xl p-6 border-4 border-green-900">
       <div className="mb-6 bg-white/95 backdrop-blur-sm rounded-lg p-4 border-2 border-gray-300 shadow-md">
         <h2 className="text-2xl font-bold text-gray-900">
-          🏁 Live Race Track
+          🏁 Live Race
         </h2>
       </div>
 
