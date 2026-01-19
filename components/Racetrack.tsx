@@ -10,14 +10,7 @@ interface RacetrackProps {
 
 export function Racetrack({ teams, tasks }: RacetrackProps) {
   // Sort teams by progress (descending), then by updatedAt (ascending for earlier = better)
-  // Removed useMemo to ensure fresh sorting on every render
-  console.log('🏁 Racetrack: Computing ranked teams with', teams.length, 'teams');
-  console.log('🏁 Sample team progress:', teams.slice(0, 3).map(t => ({
-    name: t.name,
-    completed: getTasksCompleted(t.progress),
-    updatedAt: t.updatedAt
-  })));
-  
+  // No useMemo - always sort fresh for real-time updates
   const rankedTeams = [...teams].sort((a, b) => {
     const aCompleted = getTasksCompleted(a.progress);
     const bCompleted = getTasksCompleted(b.progress);

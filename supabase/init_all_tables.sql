@@ -2,6 +2,32 @@
 -- Run this comprehensive script in your Supabase SQL Editor to populate all tables at once
 
 -- =============================================================================
+-- TEAMS TABLE
+-- =============================================================================
+INSERT INTO teams (id, name, icon, progress, last_updated_by) VALUES
+('team-1', 'Team 1 - Bro Code Ninjas', '🐴', '[false, false, false, false, false, false, false, false, false, false]'::jsonb, ''),
+('team-2', 'Team 2 - Bug Busters', '🦄', '[false, false, false, false, false, false, false, false, false, false]'::jsonb, ''),
+('team-3', 'Team 3 - Syntax Samurai', '🦓', '[false, false, false, false, false, false, false, false, false, false]'::jsonb, ''),
+('team-4', 'Team 4 - Pixel Pioneers', '🐎', '[false, false, false, false, false, false, false, false, false, false]'::jsonb, ''),
+('team-5', 'Team 5 - Data Dragons', '🏇', '[false, false, false, false, false, false, false, false, false, false]'::jsonb, ''),
+('team-6', 'Team 6 - Cloud Crusaders', '🎠', '[false, false, false, false, false, false, false, false, false, false]'::jsonb, ''),
+('team-7', 'Team 7 - Binary Bandits', '🐫', '[false, false, false, false, false, false, false, false, false, false]'::jsonb, ''),
+('team-8', 'Team 8 - Algorithm Avengers', '🦙', '[false, false, false, false, false, false, false, false, false, false]'::jsonb, ''),
+('team-9', 'Team 9 - Dev Dynamos', '🦒', '[false, false, false, false, false, false, false, false, false, false]'::jsonb, ''),
+('team-10', 'Team 10 - Hack Heroes', '🐆', '[false, false, false, false, false, false, false, false, false, false]'::jsonb, ''),
+('team-11', 'Team 11 - Stack Smashers', '🐅', '[false, false, false, false, false, false, false, false, false, false]'::jsonb, ''),
+('team-12', 'Team 12 - Logic Legends', '🦁', '[false, false, false, false, false, false, false, false, false, false]'::jsonb, ''),
+('team-13', 'Team 13 - Byte Brawlers', '🐗', '[false, false, false, false, false, false, false, false, false, false]'::jsonb, ''),
+('team-14', 'Team 14 - Script Soldiers', '🦌', '[false, false, false, false, false, false, false, false, false, false]'::jsonb, ''),
+('team-15', 'Team 15 - Tech Titans', '🐕', '[false, false, false, false, false, false, false, false, false, false]'::jsonb, ''),
+('team-16', 'Team 16 - Cyber Cyclones', '🐺', '[false, false, false, false, false, false, false, false, false, false]'::jsonb, ''),
+('team-17', 'Team 17 - Digital Dreamers', '🦊', '[false, false, false, false, false, false, false, false, false, false]'::jsonb, ''),
+('team-18', 'Team 18 - Quantum Questers', '🦝', '[false, false, false, false, false, false, false, false, false, false]'::jsonb, ''),
+('team-19', 'Team 19 - Code Commanders', '🐿️', '[false, false, false, false, false, false, false, false, false, false]'::jsonb, ''),
+('team-20', 'Team 20 - Hacking Wizards', '🦘', '[false, false, false, false, false, false, false, false, false, false]'::jsonb, '')
+ON CONFLICT (id) DO NOTHING;
+
+-- =============================================================================
 -- TASKS TABLE
 -- =============================================================================
 INSERT INTO tasks (id, title, description, due_date, points, locked) VALUES
@@ -49,11 +75,14 @@ ON CONFLICT (team_id) DO NOTHING;
 -- VERIFICATION
 -- =============================================================================
 SELECT 
+  (SELECT COUNT(*) FROM teams) as teams_count,
   (SELECT COUNT(*) FROM tasks) as tasks_count,
   (SELECT COUNT(*) FROM rubric) as rubric_count,
   (SELECT COUNT(*) FROM finalist_teams) as finalists_count;
 
 -- Show all data
+SELECT 'TEAMS' as table_name, COUNT(*) as count FROM teams
+UNION ALL
 SELECT 'TASKS' as table_name, COUNT(*) as count FROM tasks
 UNION ALL
 SELECT 'RUBRIC' as table_name, COUNT(*) as count FROM rubric

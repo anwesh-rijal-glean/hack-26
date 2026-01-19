@@ -1,6 +1,10 @@
 import { NextResponse } from 'next/server';
 import { getRubric, updateRubric } from '@/lib/db';
 
+// Force dynamic rendering - disable Next.js caching
+export const dynamic = 'force-dynamic';
+export const revalidate = 0;
+
 export async function GET() {
   try {
     const rubric = await getRubric();

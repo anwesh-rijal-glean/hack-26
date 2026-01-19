@@ -2,14 +2,10 @@
 
 import { Team, Task } from "@/lib/types";
 import { Button } from "./ui/button";
-import { Textarea } from "./ui/textarea";
 import { TaskChecklist } from "./TaskChecklist";
-import { LinksManager } from "./LinksManager";
 import { AuditLog } from "./AuditLog";
 import { X } from "lucide-react";
-import { useState, useEffect } from "react";
 import { useStore } from "@/lib/store";
-import { Link as LinkType } from "@/lib/types";
 
 interface TeamDetailDrawerProps {
   team: Team;
@@ -22,34 +18,13 @@ export function TeamDetailDrawer({
   tasks,
   onClose,
 }: TeamDetailDrawerProps) {
-  const [notes, setNotes] = useState(team.notes);
-
   const toggleTask = useStore((state) => state.toggleTask);
-  const setNotesStore = useStore((state) => state.setNotes);
-  const addLink = useStore((state) => state.addLink);
-  const removeLink = useStore((state) => state.removeLink);
   const auditLog = useStore((state) => state.auditLog);
-
-  useEffect(() => {
-    setNotes(team.notes);
-  }, [team.notes]);
 
   const teamAuditLog = auditLog.filter((event) => event.teamId === team.id);
 
   const handleToggleTask = (taskIndex: number) => {
     toggleTask(team.id, taskIndex, { type: "admin", id: "admin" });
-  };
-
-  const handleSaveNotes = () => {
-    setNotesStore(team.id, notes, { type: "admin", id: "admin" });
-  };
-
-  const handleAddLink = (link: LinkType) => {
-    addLink(team.id, link, { type: "admin", id: "admin" });
-  };
-
-  const handleRemoveLink = (linkId: string) => {
-    removeLink(team.id, linkId, { type: "admin", id: "admin" });
   };
 
   return (
@@ -83,26 +58,6 @@ export function TeamDetailDrawer({
               disabled={false}
             />
           </div>
-
-          {/* Notes */}
-          <div>
-            <h3 className="text-lg font-semibold text-gray-900 mb-3">
-              Team Notes
-            </h3>
-            <Textarea
-              value={notes}
-              onChange={(e) => setNotes(e.target.value)}
-              className="min-h-[100px] mb-2"
-            />
-            <Button onClick={handleSaveNotes}>Save Notes</Button>
-          </div>
-
-          {/* Links */}
-          <LinksManager
-            links={team.links}
-            onAdd={handleAddLink}
-            onRemove={handleRemoveLink}
-          />
 
           {/* Audit Log */}
           <AuditLog events={teamAuditLog} />

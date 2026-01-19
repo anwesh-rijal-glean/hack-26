@@ -145,8 +145,6 @@ export const INITIAL_TEAMS: Team[] = TEAM_NAMES.map((name, index) => ({
   horseIcon: HORSE_ICONS[index],
   color: COLORS[index],
   progress: Array(10).fill(false),
-  notes: "",
-  links: [],
   updatedAt: new Date().toISOString(),
   lastUpdatedBy: "",
 }));
