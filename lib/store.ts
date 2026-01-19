@@ -1,5 +1,5 @@
 import { create } from "zustand";
-import { AppState, Actor, AuditEvent, Link, Team, Task, Scorecard, RubricCriterion } from "./types";
+import { AppState, Actor, AuditEvent, Team, Task, Scorecard, RubricCriterion } from "./types";
 import { INITIAL_TASKS, INITIAL_TEAMS, INITIAL_RUBRIC, FINALIST_TEAM_IDS } from "./seed";
 import { generateId } from "./utils";
 
@@ -9,12 +9,9 @@ interface StoreState extends AppState {
   // Actions
   fetchAllData: () => Promise<void>;
   toggleTask: (teamId: string, taskIndex: number, actor: Actor) => Promise<void>;
-  setNotes: (teamId: string, notes: string, actor: Actor) => void;
   setTeamName: (teamId: string, name: string, actor: Actor) => Promise<void>;
   setTeamIcon: (teamId: string, icon: string, actor: Actor) => Promise<void>;
   updateTask: (taskId: number, updates: Partial<Task>, actor: Actor) => Promise<void>;
-  addLink: (teamId: string, link: Link, actor: Actor) => void;
-  removeLink: (teamId: string, linkId: string, actor: Actor) => void;
   lockTask: (taskId: number, locked: boolean, actor: Actor) => void;
   resetTeam: (teamId: string, actor: Actor) => void;
   undoLast: (teamId: string, actor: Actor) => void;
@@ -46,80 +43,76 @@ const createAuditEvent = (
 });
 
 // Helper function to safely make API calls
+// Forces fresh data from database, no caching at any level
 async function apiCall<T>(url: string, options?: RequestInit): Promise<T | null> {
   try {
-    const response = await fetch(url, options);
+    const fetchOptions: RequestInit = {
+      ...options,
+      cache: 'no-store', // Next.js: don't cache
+      headers: {
+        ...options?.headers,
+        'Cache-Control': 'no-cache, no-store, must-revalidate, max-age=0',
+        'Pragma': 'no-cache',
+        'Expires': '0',
+      },
+    };
+    
+    const response = await fetch(url, fetchOptions);
+    
     if (!response.ok) {
-      console.error(`API call failed: ${url}`, response.statusText);
+      console.error(`❌ API call failed: ${url}`, response.statusText);
       return null;
     }
+    
     return await response.json();
   } catch (error) {
-    console.error(`API call error: ${url}`, error);
+    console.error(`❌ API call error: ${url}`, error);
     return null;
   }
 }
 
-export const useStore = create<StoreState>((set, get) => ({
-  // Start with empty arrays - will be populated from database
-  tasks: [],
-  teams: [],
-  auditLog: [],
-  rubric: [],
-  scorecards: [],
-  finalistTeamIds: [],
-  isLoading: false,
+export const useStore = create<StoreState>((set, get) => {
+  return {
+    // Start with empty arrays - will be populated from database
+    tasks: [],
+    teams: [],
+    auditLog: [],
+    rubric: [],
+    scorecards: [],
+    finalistTeamIds: [],
+    lastFetchTimestamp: 0,
+    isLoading: false,
 
-  // Fetch all data from API
+  // Fetch all data from API - always fresh from database, no caching
   fetchAllData: async () => {
     set({ isLoading: true });
     try {
-      console.log('🔄 Fetching data from database...');
-      
-      // Add cache-busting timestamp to ensure fresh data
-      const timestamp = Date.now();
+      // Add cache-busting timestamp + random to ensure absolutely no caching
+      const cacheBust = `${Date.now()}-${Math.random()}`;
       
       const [teams, tasks, auditLog, scorecards, rubric, finalistIds] = await Promise.all([
-        apiCall<Team[]>(`/api/teams?t=${timestamp}`),
-        apiCall<Task[]>(`/api/tasks?t=${timestamp}`),
-        apiCall<AuditEvent[]>(`/api/audit?t=${timestamp}`),
-        apiCall<Scorecard[]>(`/api/scorecards?t=${timestamp}`),
-        apiCall<RubricCriterion[]>(`/api/rubric?t=${timestamp}`),
-        apiCall<string[]>(`/api/finalists?t=${timestamp}`),
+        apiCall<Team[]>(`/api/teams?_=${cacheBust}`),
+        apiCall<Task[]>(`/api/tasks?_=${cacheBust}`),
+        apiCall<AuditEvent[]>(`/api/audit?_=${cacheBust}`),
+        apiCall<Scorecard[]>(`/api/scorecards?_=${cacheBust}`),
+        apiCall<RubricCriterion[]>(`/api/rubric?_=${cacheBust}`),
+        apiCall<string[]>(`/api/finalists?_=${cacheBust}`),
       ]);
 
-      console.log('✅ Fetched from database:', {
-        teams: teams?.length || 0,
-        tasks: tasks?.length || 0,
-        scorecards: scorecards?.length || 0,
-        rubric: rubric?.length || 0,
-        finalistIds: finalistIds?.length || 0,
-      });
-
-      // Log team names for debugging
-      if (teams && teams.length > 0) {
-        console.log('📋 Team names from database:', 
-          teams.map(t => ({ id: t.id, name: t.name, icon: t.horseIcon }))
-        );
-      }
-
-      // Always update with what we got from the database
-      // Even if it's empty, that's the real state
+      // Always update with fresh data from database
+      // Deep clone to ensure new object references for React re-renders
+      const fetchTimestamp = Date.now();
       const newState = {
-        teams: teams || [],
-        tasks: tasks || [],
-        auditLog: auditLog || [],
-        scorecards: scorecards || [],
-        rubric: rubric || [],
-        finalistTeamIds: finalistIds || [],
+        teams: teams ? teams.map(t => ({ ...t, progress: [...t.progress] })) : [],
+        tasks: tasks ? tasks.map(t => ({ ...t })) : [],
+        auditLog: auditLog ? auditLog.map(a => ({ ...a })) : [],
+        scorecards: scorecards ? scorecards.map(s => ({ ...s })) : [],
+        rubric: rubric ? rubric.map(r => ({ ...r })) : [],
+        finalistTeamIds: finalistIds ? [...finalistIds] : [],
+        lastFetchTimestamp: fetchTimestamp,
         isLoading: false,
       };
-      
-      console.log('💾 Setting store state with:', {
-        teams: newState.teams.length,
-        sampleTeamNames: newState.teams.slice(0, 3).map(t => t.name),
-      });
-      
+
       set(newState);
     } catch (error) {
       console.error('❌ Error fetching data from database:', error);
@@ -132,8 +125,6 @@ export const useStore = create<StoreState>((set, get) => ({
     if (state.teams.length === 0) {
       console.log('📦 Initializing store from database...');
       await get().fetchAllData();
-    } else {
-      console.log('✅ Store already initialized with', state.teams.length, 'teams');
     }
   },
 
@@ -189,35 +180,8 @@ export const useStore = create<StoreState>((set, get) => ({
     }
 
     // Don't refresh - optimistic update is already correct
-    // Database is updated, other users will see it when they load
-    console.log('✅ Task toggled and saved to database');
   },
 
-  setNotes: (teamId: string, notes: string, actor: Actor) => {
-    set((state) => {
-      const team = state.teams.find((t) => t.id === teamId);
-      if (!team) return state;
-
-      const updatedTeam: Team = {
-        ...team,
-        notes,
-        updatedAt: new Date().toISOString(),
-        lastUpdatedBy: actor.type === "admin" ? "Admin" : team.name,
-      };
-
-      const auditEvent = createAuditEvent(
-        "EDIT_NOTES",
-        actor,
-        teamId,
-        { from: team.notes, to: notes }
-      );
-
-      return {
-        teams: state.teams.map((t) => (t.id === teamId ? updatedTeam : t)),
-        auditLog: [auditEvent, ...state.auditLog],
-      };
-    });
-  },
 
   setTeamName: async (teamId: string, name: string, actor: Actor) => {
     const trimmedName = name.trim();
@@ -267,8 +231,6 @@ export const useStore = create<StoreState>((set, get) => ({
     }
 
     // Don't refresh - optimistic update is already correct
-    // Database is updated, other users will see it when they load
-    console.log('✅ Team name saved to database:', trimmedName);
   },
 
   setTeamIcon: async (teamId: string, icon: string, actor: Actor) => {
@@ -318,8 +280,6 @@ export const useStore = create<StoreState>((set, get) => ({
     }
 
     // Don't refresh - optimistic update is already correct
-    // Database is updated, other users will see it when they load
-    console.log('✅ Team icon saved to database:', icon);
   },
 
   updateTask: async (taskId: number, updates: Partial<Task>, actor: Actor) => {
@@ -354,60 +314,6 @@ export const useStore = create<StoreState>((set, get) => ({
     }
 
     // Don't refresh - optimistic update is already correct
-    console.log('✅ Task updated and saved to database');
-  },
-
-  addLink: (teamId: string, link: Link, actor: Actor) => {
-    set((state) => {
-      const team = state.teams.find((t) => t.id === teamId);
-      if (!team) return state;
-
-      const updatedTeam: Team = {
-        ...team,
-        links: [...team.links, link],
-        updatedAt: new Date().toISOString(),
-        lastUpdatedBy: actor.type === "admin" ? "Admin" : team.name,
-      };
-
-      const auditEvent = createAuditEvent(
-        "ADD_LINK",
-        actor,
-        teamId,
-        { link }
-      );
-
-      return {
-        teams: state.teams.map((t) => (t.id === teamId ? updatedTeam : t)),
-        auditLog: [auditEvent, ...state.auditLog],
-      };
-    });
-  },
-
-  removeLink: (teamId: string, linkId: string, actor: Actor) => {
-    set((state) => {
-      const team = state.teams.find((t) => t.id === teamId);
-      if (!team) return state;
-
-      const removedLink = team.links.find((l) => l.id === linkId);
-      const updatedTeam: Team = {
-        ...team,
-        links: team.links.filter((l) => l.id !== linkId),
-        updatedAt: new Date().toISOString(),
-        lastUpdatedBy: actor.type === "admin" ? "Admin" : team.name,
-      };
-
-      const auditEvent = createAuditEvent(
-        "REMOVE_LINK",
-        actor,
-        teamId,
-        { link: removedLink }
-      );
-
-      return {
-        teams: state.teams.map((t) => (t.id === teamId ? updatedTeam : t)),
-        auditLog: [auditEvent, ...state.auditLog],
-      };
-    });
   },
 
   lockTask: async (taskId: number, locked: boolean, actor: Actor) => {
@@ -445,7 +351,6 @@ export const useStore = create<StoreState>((set, get) => ({
     }
 
     // Don't refresh - optimistic update is already correct
-    console.log(`✅ Task ${locked ? 'locked' : 'unlocked'} and saved to database`);
   },
 
   resetTeam: async (teamId: string, actor: Actor) => {
@@ -455,13 +360,9 @@ export const useStore = create<StoreState>((set, get) => ({
 
     // Store old state for potential revert
     const oldProgress = [...team.progress];
-    const oldNotes = team.notes;
-    const oldLinks = [...team.links];
 
     const updates = {
       progress: Array(10).fill(false),
-      notes: "",
-      links: [],
       lastUpdatedBy: "Admin",
     };
 
@@ -497,8 +398,6 @@ export const useStore = create<StoreState>((set, get) => ({
             ? {
                 ...t,
                 progress: oldProgress,
-                notes: oldNotes,
-                links: oldLinks,
               }
             : t
         ),
@@ -507,7 +406,6 @@ export const useStore = create<StoreState>((set, get) => ({
     }
 
     // Don't refresh - optimistic update is already correct
-    console.log('✅ Team reset and saved to database');
   },
 
   undoLast: async (teamId: string, actor: Actor) => {
@@ -515,9 +413,7 @@ export const useStore = create<StoreState>((set, get) => ({
     const lastEvent = state.auditLog.find(
       (event) =>
         event.teamId === teamId &&
-        ["TOGGLE_TASK", "EDIT_NOTES", "ADD_LINK", "REMOVE_LINK"].includes(
-          event.action
-        )
+        ["TOGGLE_TASK"].includes(event.action)
     );
 
     if (!lastEvent) return;
@@ -527,8 +423,6 @@ export const useStore = create<StoreState>((set, get) => ({
 
     // Store old state for potential revert
     const oldProgress = [...team.progress];
-    const oldNotes = team.notes;
-    const oldLinks = [...team.links];
 
     let updates: Partial<Team> = {};
 
@@ -538,21 +432,6 @@ export const useStore = create<StoreState>((set, get) => ({
         const newProgress = [...team.progress];
         newProgress[taskIndex] = from;
         updates.progress = newProgress;
-        break;
-      }
-      case "EDIT_NOTES": {
-        const { from } = lastEvent.payload;
-        updates.notes = from;
-        break;
-      }
-      case "ADD_LINK": {
-        const { link } = lastEvent.payload;
-        updates.links = team.links.filter((l) => l.id !== link.id);
-        break;
-      }
-      case "REMOVE_LINK": {
-        const { link } = lastEvent.payload;
-        updates.links = [...team.links, link];
         break;
       }
     }
@@ -591,8 +470,6 @@ export const useStore = create<StoreState>((set, get) => ({
             ? {
                 ...t,
                 progress: oldProgress,
-                notes: oldNotes,
-                links: oldLinks,
               }
             : t
         ),
@@ -601,7 +478,6 @@ export const useStore = create<StoreState>((set, get) => ({
     }
 
     // Don't refresh - optimistic update is already correct
-    console.log('✅ Undo applied and saved to database');
   },
 
   // Scorecard actions
@@ -629,7 +505,6 @@ export const useStore = create<StoreState>((set, get) => ({
     });
 
     // Don't refresh - optimistic update is already correct
-    console.log('✅ Scorecard saved to database');
   },
 
   submitScorecard: (scorecardId: string) => {
@@ -660,7 +535,6 @@ export const useStore = create<StoreState>((set, get) => ({
     });
 
     // Don't refresh - optimistic update is already correct
-    console.log('✅ Rubric updated and saved to database');
   },
 
   getScorecard: (judgeId: string, teamId: string) => {
@@ -683,7 +557,6 @@ export const useStore = create<StoreState>((set, get) => ({
     });
 
     // Don't refresh - optimistic update is already correct
-    console.log('✅ Finalist teams updated and saved to database');
   },
 
   toggleFinalist: async (teamId: string) => {
@@ -709,12 +582,16 @@ export const useStore = create<StoreState>((set, get) => ({
       await get().fetchAllData();
     }
   },
-}));
+}});
 
-// Auto-fetch data on store creation
+// Add debug utility (client-side only)
 if (typeof window !== 'undefined') {
-  // Initial fetch with error handling
-  useStore.getState().fetchAllData().catch((error) => {
-    console.error('Initial data fetch failed:', error);
-  });
+  (window as any).debugStorage = () => {
+    console.log('🔍 STORAGE DEBUG:');
+    console.log('localStorage keys:', Object.keys(localStorage));
+    console.log('sessionStorage keys:', Object.keys(sessionStorage));
+    console.log('Current Zustand store state:', useStore.getState());
+  };
+  
+  console.log('💡 TIP: Run debugStorage() in console to check store state');
 }

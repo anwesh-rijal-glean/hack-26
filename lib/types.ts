@@ -7,20 +7,12 @@ export interface Task {
   points?: number;
 }
 
-export interface Link {
-  id: string;
-  label: string;
-  url: string;
-}
-
 export interface Team {
   id: string;
   name: string;
   horseIcon: string; // emoji
   color?: string;
   progress: boolean[]; // length 10
-  notes: string;
-  links: Link[];
   updatedAt: string;
   lastUpdatedBy: string;
 }
@@ -34,9 +26,6 @@ export interface Actor {
 
 export type ActionType =
   | "TOGGLE_TASK"
-  | "EDIT_NOTES"
-  | "ADD_LINK"
-  | "REMOVE_LINK"
   | "ADMIN_OVERRIDE"
   | "RESET_TEAM"
   | "LOCK_TASK"
@@ -83,5 +72,6 @@ export interface AppState {
   rubric: RubricCriterion[];
   scorecards: Scorecard[];
   finalistTeamIds: string[]; // Dynamic list of finalist teams
+  lastFetchTimestamp?: number; // Timestamp of last data fetch to force re-renders
 }
 

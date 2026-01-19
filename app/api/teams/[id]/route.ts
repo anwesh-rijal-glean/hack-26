@@ -3,6 +3,10 @@ import { getTeam, updateTeam, addAuditLog } from '@/lib/db';
 import { generateId } from '@/lib/utils';
 import { AuditEvent, ActionType } from '@/lib/types';
 
+// Force dynamic rendering - disable Next.js caching
+export const dynamic = 'force-dynamic';
+export const revalidate = 0;
+
 export async function GET(
   request: Request,
   { params }: { params: { id: string } }
@@ -53,9 +57,6 @@ export async function PATCH(
             to: updates.progress[taskIndex],
           };
         }
-      } else if (typeof updates?.notes === "string") {
-        action = "EDIT_NOTES";
-        payload = { from: existingTeam.notes, to: updates.notes };
       }
 
       const auditEvent: AuditEvent = {

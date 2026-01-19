@@ -1,69 +1,71 @@
 "use client";
 
 import Link from "next/link";
-import { useEffect, useRef } from "react";
+import { useEffect, useState } from "react";
 import { useStore } from "@/lib/store";
 import { Racetrack } from "@/components/Racetrack";
 import { getTasksCompleted } from "@/lib/utils";
 
 export default function HomePage() {
-  const fetchAllData = useStore((state) => state.fetchAllData);
   const teams = useStore((state) => state.teams);
   const tasks = useStore((state) => state.tasks);
-  const lastFetchRef = useRef<number>(0);
+  const fetchAllData = useStore((state) => state.fetchAllData);
+  const [isInitialized, setIsInitialized] = useState(false);
 
-  // Force fresh data fetch from database on mount and on focus
+  // Fetch fresh data from database on mount and visibility changes
+  // NO auto-refresh polling to avoid hammering the database
   useEffect(() => {
-    // Fetch immediately on mount
-    const now = Date.now();
-    console.log('🔄 Home page mounted - fetching fresh data from database...');
-    fetchAllData().catch((error) => {
-      console.error('❌ Failed to fetch initial data:', error);
-    });
-    lastFetchRef.current = now;
+    let isActive = true;
 
-    // Also refresh when window gains focus (handles tab switching and navigation)
-    const handleFocus = () => {
-      const timeSinceLastFetch = Date.now() - lastFetchRef.current;
-      // Only fetch if it's been more than 1 second since last fetch (avoid duplicate fetches)
-      if (timeSinceLastFetch > 1000) {
-        console.log('🔄 Window focused - refreshing data...');
-        fetchAllData().catch((error) => {
-          console.error('❌ Failed to refresh data:', error);
-        });
-        lastFetchRef.current = Date.now();
+    const performFetch = async () => {
+      if (!isActive) return;
+      
+      try {
+        await fetchAllData();
+        if (isActive) {
+          setIsInitialized(true);
+        }
+      } catch (error) {
+        console.error('Failed to fetch data:', error);
       }
     };
 
-    // Refresh when tab becomes visible
+    // Fetch on mount
+    performFetch();
+
+    // Also fetch when tab becomes visible (user switches back)
     const handleVisibilityChange = () => {
       if (document.visibilityState === 'visible') {
-        const timeSinceLastFetch = Date.now() - lastFetchRef.current;
-        if (timeSinceLastFetch > 1000) {
-          console.log('🔄 Page became visible - refreshing data...');
-          fetchAllData().catch((error) => {
-            console.error('❌ Failed to refresh data:', error);
-          });
-          lastFetchRef.current = Date.now();
-        }
+        performFetch();
       }
     };
 
-    // Add event listeners
-    window.addEventListener('focus', handleFocus);
     document.addEventListener('visibilitychange', handleVisibilityChange);
 
     // Cleanup
     return () => {
-      window.removeEventListener('focus', handleFocus);
+      isActive = false;
       document.removeEventListener('visibilitychange', handleVisibilityChange);
     };
-  }, []); // Empty array - but will re-run if component unmounts and remounts
+  }, [fetchAllData]);
 
   // Calculate stats
   const teamsCompleted = teams.filter((t) => getTasksCompleted(t.progress) === 10).length;
   const totalProgress = teams.reduce((sum, t) => sum + getTasksCompleted(t.progress), 0);
   const averageProgress = teams.length > 0 ? Math.round((totalProgress / (teams.length * 10)) * 100) : 0;
+
+  // Show loading state while initializing
+  if (!isInitialized && teams.length === 0) {
+    return (
+      <div className="min-h-screen bg-gradient-to-br from-blue-50 via-indigo-50 to-purple-50 flex items-center justify-center">
+        <div className="text-center">
+          <div className="animate-spin rounded-full h-16 w-16 border-b-2 border-blue-600 mx-auto mb-4"></div>
+          <p className="text-lg font-semibold text-gray-700">Loading hackathon data...</p>
+          <p className="text-sm text-gray-500 mt-2">Fetching teams from database</p>
+        </div>
+      </div>
+    );
+  }
 
   return (
     <div className="min-h-screen bg-gradient-to-br from-blue-50 via-indigo-50 to-purple-50">
@@ -76,7 +78,7 @@ export default function HomePage() {
                 🏁 Glean SE Hackathon 2026 - Live Results
               </h1>
               <p className="text-sm text-gray-600 mt-1">
-                Real-time competition dashboard
+                Live competition dashboard · Refresh page to see latest updates
               </p>
             </div>
             <div className="flex gap-3">
@@ -145,4 +147,3 @@ export default function HomePage() {
     </div>
   );
 }
-

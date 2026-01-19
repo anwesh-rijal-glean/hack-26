@@ -6,8 +6,6 @@ CREATE TABLE IF NOT EXISTS teams (
   name TEXT NOT NULL,
   icon TEXT DEFAULT '🐴',
   progress JSONB DEFAULT '[]'::jsonb,
-  notes TEXT DEFAULT '',
-  links JSONB DEFAULT '[]'::jsonb,
   last_updated_by TEXT DEFAULT '',
   created_at TIMESTAMPTZ DEFAULT NOW(),
   updated_at TIMESTAMPTZ DEFAULT NOW()

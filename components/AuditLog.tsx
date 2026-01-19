@@ -9,9 +9,6 @@ interface AuditLogProps {
 
 const actionLabels: Record<AuditEvent["action"], string> = {
   TOGGLE_TASK: "Task toggled",
-  EDIT_NOTES: "Notes edited",
-  ADD_LINK: "Link added",
-  REMOVE_LINK: "Link removed",
   ADMIN_OVERRIDE: "Admin override",
   RESET_TEAM: "Team reset",
   LOCK_TASK: "Task locked",
@@ -21,9 +18,6 @@ const actionLabels: Record<AuditEvent["action"], string> = {
 
 const actionColors: Record<AuditEvent["action"], string> = {
   TOGGLE_TASK: "bg-blue-100 text-blue-800",
-  EDIT_NOTES: "bg-green-100 text-green-800",
-  ADD_LINK: "bg-purple-100 text-purple-800",
-  REMOVE_LINK: "bg-orange-100 text-orange-800",
   ADMIN_OVERRIDE: "bg-red-100 text-red-800",
   RESET_TEAM: "bg-red-200 text-red-900",
   LOCK_TASK: "bg-yellow-100 text-yellow-800",
@@ -70,10 +64,6 @@ export function AuditLog({ events }: AuditLogProps) {
                           ` - Task #${event.payload.taskIndex + 1}: ${
                             event.payload.to ? "completed" : "uncompleted"
                           }`}
-                        {event.action === "ADD_LINK" &&
-                          ` - "${event.payload.link?.label}"`}
-                        {event.action === "REMOVE_LINK" &&
-                          ` - "${event.payload.link?.label}"`}
                       </span>
                     )}
                   </p>

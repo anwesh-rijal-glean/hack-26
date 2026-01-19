@@ -103,8 +103,6 @@ function mapDbRowToTeam(row: any): Team {
     name: row.name,
     horseIcon: row.icon,
     progress: row.progress || [],
-    notes: row.notes || '',
-    links: row.links || [],
     updatedAt: row.updated_at,
     lastUpdatedBy: row.last_updated_by || '',
     color: row.color,
@@ -120,8 +118,6 @@ function mapTeamUpdatesToDb(updates: Partial<Team>): any {
   if ('name' in updates) dbUpdates.name = updates.name;
   if ('horseIcon' in updates) dbUpdates.icon = updates.horseIcon;
   if ('progress' in updates) dbUpdates.progress = updates.progress;
-  if ('notes' in updates) dbUpdates.notes = updates.notes;
-  if ('links' in updates) dbUpdates.links = updates.links;
   if ('lastUpdatedBy' in updates) dbUpdates.last_updated_by = updates.lastUpdatedBy;
   if ('color' in updates) dbUpdates.color = updates.color;
   
@@ -220,8 +216,6 @@ export async function initializeDatabase(): Promise<void> {
         icon: t.horseIcon,
         color: t.color,
         progress: t.progress,
-        notes: t.notes,
-        links: t.links,
         last_updated_by: t.lastUpdatedBy || '',
       }));
       
