@@ -46,6 +46,7 @@ export default function HomePage() {
     return () => {
       isActive = false;
       document.removeEventListener('visibilitychange', handleVisibilityChange);
+      console.log('🛑 Auto-refresh stopped');
     };
   }, [fetchAllData]);
 
